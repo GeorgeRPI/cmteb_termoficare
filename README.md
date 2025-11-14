@@ -1,5 +1,5 @@
 # Integrare CMTEB pentru Home Assistant
-# v14.11.2025
+### v.14.11.2025
 
 Monitorizează starea sistemului de termoficare București direct în Home Assistant.
 
