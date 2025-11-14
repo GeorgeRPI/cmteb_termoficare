@@ -1,0 +1,8 @@
+{
+  "name": "CMTEB Termoficare Bucuresti",
+  "render_readme": true,
+  "domains": ["sensor"],
+  "homeassistant": "2023.8.0",
+  "country": ["RO"],
+  "zip_release": false
+}
