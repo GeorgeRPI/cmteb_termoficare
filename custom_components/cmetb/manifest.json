@@ -1,7 +1,7 @@
 {
   "domain": "cmteb",
   "name": "CMTEB Termoficare Bucuresti",
-  "codeowners": ["@@GeorgeRPI"],
+  "codeowners": ["@GeorgeRPI"],
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/GeorgeRPI/cmteb_termoficare",
