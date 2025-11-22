@@ -4,6 +4,8 @@ from datetime import timedelta
 import requests
 from bs4 import BeautifulSoup
 import time
+import re
+from typing import List, Tuple
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
@@ -13,7 +15,20 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN, URL_CMTEB
 
 _LOGGER = logging.getLogger(__name__)
-SCAN_INTERVAL = timedelta(hours=2)
+SCAN_INTERVAL = timedelta(minutes=30)
+
+# Dicționar cu prescurtări și variante comune
+ADRESA_VARIATIONS = {
+    'str': ['str', 'str.', 'Str', 'Str.', 'strada', 'Strada', 'STRADA'],
+    'bd': ['bd', 'bd.', 'Bd', 'Bd.', 'bld', 'bld.', 'Bld', 'Bld.', 'bulevard', 'Bulevard', 'BULEVARD'],
+    'sos': ['sos', 'sos.', 'Sos', 'Sos.', 'şos', 'şos.', 'Şos', 'Şos.', 'sosea', 'Sosea', 'şosea', 'Şosea', 'SOSEA'],
+    'calea': ['calea', 'Calea', 'CALAEA'],
+    'drum': ['drm', 'drm.', 'Drm', 'Drm.', 'drum', 'Drum', 'DRUM'],
+    'p-ta': ['p-ta', 'p-ta.', 'P-ta', 'P-ta.', 'piața', 'Piața', 'piata', 'Piata', 'PIAȚA'],
+    'aleea': ['aleea', 'Aleea', 'ALEEA'],
+    'intrare': ['intrare', 'Intrare', 'INTRARE'],
+    'platforma': ['platforma', 'Platforma', 'PLATFORMA']
+}
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -23,22 +38,114 @@ async def async_setup_entry(
     """Set up the CMTEB sensors from a config entry."""
     address = config_entry.data.get("adresa")
     punct_termic = config_entry.data.get("punct_termic", "")
+    
+    # Generează un nume unic pentru senzori bazat pe adresă
+    address_slug = _create_address_slug(address)
 
     sensors = [
-        CmtebSensor(config_entry, "agent_afectat", "Agent Termic Afectat"),
-        CmtebSensor(config_entry, "cauza_interventie", "Cauză Intervenție"),
-        CmtebSensor(config_entry, "data_estimata_reparatie", "Dată Estimată Reparație")
+        CmtebSensor(config_entry, "agent_afectat", "Agent Termic Afectat", address_slug),
+        CmtebSensor(config_entry, "cauza_interventie", "Cauză Intervenție", address_slug),
+        CmtebSensor(config_entry, "data_estimata_reparatie", "Dată Estimată Reparație", address_slug)
     ]
-    async_add_entities(sensors, update_before_add=True)  # True pentru a testa imediat
+    async_add_entities(sensors, update_before_add=True)
+
+def _create_address_slug(address):
+    """Creează un slug unic pentru adresă."""
+    # Curăță adresa pentru a crea un nume de entitate valid
+    slug = address.lower().strip()
+    
+    # Înlocuiește spații și caractere speciale
+    slug = re.sub(r'[^\w\s]', '', slug)  # Remove special characters
+    slug = re.sub(r'\s+', '_', slug)     # Replace spaces with underscores
+    
+    # Limitează lungimea (max 32 de caractere pentru entity_id)
+    slug = slug[:32]
+    
+    # Asigură-te că începe cu o literă
+    if not slug[0].isalpha():
+        slug = 'adresa_' + slug
+    
+    return slug
+
+def _normalize_address(address: str) -> str:
+    """Normalizează o adresă prin înlocuirea prescurtărilor."""
+    if not address:
+        return ""
+    
+    # Convert to lowercase for case-insensitive matching
+    normalized = address.lower().strip()
+    
+    # Înlocuiește variantele cu forma standard
+    for standard_form, variations in ADRESA_VARIATIONS.items():
+        for variation in variations:
+            # Caută varianta ca cuvânt întreg (cu spații în jur)
+            pattern = r'\b' + re.escape(variation.lower()) + r'\b'
+            if re.search(pattern, normalized):
+                normalized = re.sub(pattern, standard_form, normalized)
+                break
+    
+    return normalized.strip()
+
+def _addresses_match(user_address: str, site_address: str) -> bool:
+    """Verifică dacă două adrese se potrivesc, ținând cont de prescurtări."""
+    if not user_address or not site_address:
+        return False
+    
+    # Normalizează ambele adrese
+    user_norm = _normalize_address(user_address)
+    site_norm = _normalize_address(site_address)
+    
+    # Verifică potrivire exactă după normalizare
+    if user_norm in site_norm or site_norm in user_norm:
+        return True
+    
+    # Verifică potrivire parțială fără prescurtări (doar numele străzii)
+    user_clean = _extract_street_name(user_address)
+    site_clean = _extract_street_name(site_address)
+    
+    if user_clean and site_clean:
+        return user_clean in site_clean or site_clean in user_clean
+    
+    # Fallback la căutarea simplă
+    return user_address.lower() in site_address.lower()
+
+def _extract_street_name(address: str) -> str:
+    """Extrage doar numele străzii din adresă (fără tipul străzii)."""
+    if not address:
+        return ""
+    
+    address_lower = address.lower()
+    
+    # Listă cu toate variantele posibile pentru tipurile de străzi
+    street_types = []
+    for variations in ADRESA_VARIATIONS.values():
+        street_types.extend([v.lower() for v in variations])
+    
+    # Sortează după lungime (cele mai lungi primele) pentru a evita potriviri greșite
+    street_types.sort(key=len, reverse=True)
+    
+    # Încearcă să elimine tipul străzii
+    for street_type in street_types:
+        # Verifică dacă tipul străzii există în adresă
+        pattern = r'\b' + re.escape(street_type) + r'\b'
+        if re.search(pattern, address_lower):
+            # Elimină tipul străzii și orice puncte/spații în plus
+            cleaned = re.sub(pattern, '', address_lower)
+            cleaned = re.sub(r'[\.\s]+', ' ', cleaned).strip()
+            return cleaned
+    
+    # Dacă nu găsește tip de stradă, returnează adresa completă
+    return address_lower
 
 class CmtebSensor(SensorEntity):
     """Representation of a CMTEB Sensor."""
 
-    def __init__(self, config_entry, sensor_type, friendly_name):
+    def __init__(self, config_entry, sensor_type, friendly_name, address_slug):
         """Initialize the sensor."""
         self._config_entry = config_entry
         self._type = sensor_type
         self._friendly_name = friendly_name
+        self._address_slug = address_slug
         self._state = "Necunoscut"
         self._attrs = {}
         self._address = config_entry.data.get("adresa")
@@ -48,12 +155,12 @@ class CmtebSensor(SensorEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"cmteb_{self._type}"
+        return f"cmteb_{self._type}_{self._address_slug}"
 
     @property
     def friendly_name(self):
         """Return the friendly name of the sensor."""
-        return f"CMTEB {self._friendly_name}"
+        return f"CMTEB {self._friendly_name} - {self._address}"
 
     @property
     def state(self):
@@ -86,8 +193,6 @@ class CmtebSensor(SensorEntity):
                 'Connection': 'keep-alive',
             }
 
-            _LOGGER.info(f"Încerc să accesez: {URL_CMTEB}")
-            
             # Folosim session pentru a gestiona redirect-urile automat
             session = requests.Session()
             session.headers.update(headers)
@@ -95,10 +200,8 @@ class CmtebSensor(SensorEntity):
             response = session.get(
                 URL_CMTEB, 
                 timeout=30,
-                allow_redirects=True  # Permite redirect-urile
+                allow_redirects=True
             )
-            
-            _LOGGER.info(f"Răspuns primit: Status {response.status_code}, Redirect: {len(response.history)}")
             
             if response.status_code != 200:
                 self._state = f"Eroare HTTP {response.status_code}"
@@ -110,30 +213,12 @@ class CmtebSensor(SensorEntity):
                 }
                 return False
 
-            # Verifică dacă conținutul este HTML valid
-            if not response.content:
-                self._state = "Răspuns gol"
-                self._available = False
-                self._attrs = {
-                    "Eroare": "Serverul a returnat conținut gol",
-                    "Adresa": self._address,
-                    "Ultima Încercare": time.strftime("%Y-%m-%d %H:%M:%S")
-                }
-                return False
-
             # Parse the HTML
             soup = BeautifulSoup(response.content, 'html.parser')
-            
-            # Verifică titlul paginii pentru confirmare
-            title = soup.find('title')
-            if title:
-                _LOGGER.info(f"Titlul paginii: {title.text}")
-
             tables = soup.find_all('table')
-            _LOGGER.info(f"Am găsit {len(tables)} tabele pe pagină")
 
             if not tables:
-                self._state = "Fără tabele"
+                self._state = "Fără date"
                 self._available = True
                 self._attrs = {
                     "Adresa": self._address,
@@ -144,19 +229,20 @@ class CmtebSensor(SensorEntity):
 
             # Caută datele pentru adresa specificată
             data_gasita = False
-            for i, table in enumerate(tables):
+            best_match = None
+            best_match_score = 0
+            
+            for table in tables:
                 rows = table.find_all('tr')[1:]  # Skip header row
-                _LOGGER.info(f"Tabel {i+1}: {len(rows)} rânduri")
                 
-                for j, row in enumerate(rows):
+                for row in rows:
                     cols = [ele.text.strip() for ele in row.find_all('td')]
                     
                     if len(cols) >= 5 and self._address:
                         location_text = cols[1] if len(cols) > 1 else ""
-                        _LOGGER.debug(f"Rând {j+1}: {location_text}")
                         
-                        # Caută potrivire parțială în text
-                        if self._address.lower() in location_text.lower():
+                        # Verifică potrivirea inteligentă
+                        if _addresses_match(self._address, location_text):
                             agent_afectat = cols[2] if len(cols) > 2 else "N/A"
                             cauza = cols[3] if len(cols) > 3 else "N/A"
                             data_estimata = cols[4] if len(cols) > 4 else "N/A"
@@ -172,13 +258,13 @@ class CmtebSensor(SensorEntity):
                                 "Adresa": self._address,
                                 "Punct Termic": self._punct_termic,
                                 "Locatie Gasita": location_text,
+                                "Adresa Cautata": self._address,
                                 "Ultima Actualizare": time.strftime("%Y-%m-%d %H:%M:%S"),
-                                "Tabel": i + 1,
-                                "Rand": j + 1
+                                "Metoda Potrivire": "inteligenta"
                             }
                             self._available = True
-                            _LOGGER.info(f"✅ DATE GĂSITE pentru {self._address}: {self._state}")
                             data_gasita = True
+                            _LOGGER.info(f"✅ Date găsite pentru '{self._address}' în locația '{location_text}'")
                             break
                 
                 if data_gasita:
@@ -192,27 +278,15 @@ class CmtebSensor(SensorEntity):
                     "Adresa": self._address,
                     "Punct Termic": self._punct_termic,
                     "Ultima Actualizare": time.strftime("%Y-%m-%d %H:%M:%S"),
-                    "Status": "Nu s-au găsit întreruperi pentru această adresă",
-                    "Tabele Verificate": len(tables)
+                    "Status": "Nu s-au găsit întreruperi pentru această adresă"
                 }
                 _LOGGER.info(f"ℹ️ Nu s-au găsit întreruperi pentru: {self._address}")
             
             return True
 
-        except requests.exceptions.RequestException as e:
-            _LOGGER.error(f"❌ Eroare de conexiune: {e}")
-            self._state = "Eroare conexiune"
-            self._available = False
-            self._attrs = {
-                "Eroare": str(e),
-                "Adresa": self._address,
-                "Ultima Încercare": time.strftime("%Y-%m-%d %H:%M:%S")
-            }
-            return False
-            
         except Exception as e:
-            _LOGGER.error(f"❌ Eroare neașteptată: {e}")
-            self._state = "Eroare neașteptată"
+            _LOGGER.error(f"❌ Eroare la preluarea datelor: {e}")
+            self._state = "Eroare conexiune"
             self._available = False
             self._attrs = {
                 "Eroare": str(e),
