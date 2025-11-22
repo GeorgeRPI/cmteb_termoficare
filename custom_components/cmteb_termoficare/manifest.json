@@ -1,10 +1,10 @@
 {
   "domain": "cmteb_termoficare",
   "name": "CMTEB Termoficare",
-  "codeowners": ["@your_username"],
+  "codeowners": ["@GeorgeRPI"],
   "config_flow": true,
   "dependencies": [],
-  "documentation": "https://github.com/your_username/cmteb_termoficare",
+  "documentation": "https://github.com/GeorgeRPI/cmteb_termoficare",
   "integration_type": "device",
   "iot_class": "cloud_polling",
   "requirements": ["beautifulsoup4>=4.12.0", "urllib3>=1.26.0"],
