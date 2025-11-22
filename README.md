@@ -1,7 +1,7 @@
 # 🔥 CMTEB Termoficare - Integrare Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
-[![Version](https://img.shields.io/badge/version-22.11.2025.d-blue.svg)](https://github.com/your-username/cmteb_termoficare)
+[![Version](https://img.shields.io/badge/version-23.11.2025-blue.svg)](https://github.com/your-username/cmteb_termoficare)
 [![Home Assistant](https://img.shields.io/badge/Home_Assistant-2023.1%2B-green.svg)](https://www.home-assistant.io/)
 
 Integrare avansată pentru monitorizarea în timp real a întreruperilor la termoficare de pe site-ul CMTEB București.
