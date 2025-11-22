@@ -10,7 +10,7 @@ Integrare care extrage informații despre întreruperile la termoficare de pe si
 2. Click pe "Integrări"
 3. Click pe butonul cu 3 puncte în colțul dreapta sus
 4. Selectează "Repository-uri personalizate"
-5. Adaugă URL-ul: `https://github.com/numele_tau_github/cmteb_termoficare`
+5. Adaugă URL-ul: `https://github.com/GeorgeRPI/cmteb_termoficare`
 6. Selectează categoria "Integration"
 7. Click pe "Adaugă"
 8. Găsește "CMTEB Termoficare" în lista de integrări noi și click "Download"
