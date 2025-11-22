@@ -3,6 +3,7 @@ import logging
 from datetime import timedelta
 import requests
 from bs4 import BeautifulSoup
+import time
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
@@ -12,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN, URL_CMTEB
 
 _LOGGER = logging.getLogger(__name__)
-SCAN_INTERVAL = timedelta(minutes=15)
+SCAN_INTERVAL = timedelta(minutes=30)  # Mărit intervalul pentru a nu suprasolicita
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -42,6 +43,7 @@ class CmtebSensor(SensorEntity):
         self._attrs = {}
         self._address = config_entry.data.get("adresa")
         self._punct_termic = config_entry.data.get("punct_termic", "")
+        self._available = True
 
     @property
     def name(self):
@@ -59,6 +61,11 @@ class CmtebSensor(SensorEntity):
         return self._state
 
     @property
+    def available(self):
+        """Return if the sensor is available."""
+        return self._available
+
+    @property
     def extra_state_attributes(self):
         """Return the state attributes."""
         return self._attrs
@@ -68,16 +75,45 @@ class CmtebSensor(SensorEntity):
         """Return a unique ID."""
         return f"{self._config_entry.entry_id}_{self._type}"
 
+    def _get_headers(self):
+        """Return headers to mimic a real browser."""
+        return {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'ro-RO,ro;q=0.8,en-US;q=0.5,en;q=0.3',
+            'Accept-Encoding': 'gzip, deflate',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+        }
+
     def _fetch_data(self):
         """Fetch data from CMTEB website."""
         try:
-            response = requests.get(URL_CMTEB, timeout=10)
+            headers = self._get_headers()
+            
+            # Adaugă timeout și retry logic
+            response = requests.get(
+                URL_CMTEB, 
+                headers=headers, 
+                timeout=15,
+                verify=True  # Verifică certificatul SSL
+            )
             response.raise_for_status()
             
-            # Use built-in HTML parser instead of lxml
+            # Verifică dacă primim conținut HTML valid
+            if not response.content:
+                raise Exception("Răspuns gol de la server")
+                
+            # Use built-in HTML parser
             soup = BeautifulSoup(response.content, 'html.parser')
+            
+            # Verifică dacă pagina conține datele așteptate
+            if not soup.find_all('table'):
+                raise Exception("Nu s-au găsit tabele pe pagină")
+                
             tables = soup.find_all('table')
 
+            data_gasita = False
             for table in tables:
                 rows = table.find_all('tr')[1:]  # Skip header row
                 
@@ -90,7 +126,7 @@ class CmtebSensor(SensorEntity):
                         address_match = self._address and self._address.lower() in location_text.lower()
                         punct_match = self._punct_termic and self._punct_termic.lower() in location_text.lower()
                         
-                        if address_match or punct_match or (self._address and self._address in location_text):
+                        if address_match or punct_match:
                             # Found matching location
                             agent_afectat = cols[2] if len(cols) > 2 else "N/A"
                             cauza = cols[3] if len(cols) > 3 else "N/A"
@@ -106,24 +142,50 @@ class CmtebSensor(SensorEntity):
                             self._attrs = {
                                 "Adresa": self._address,
                                 "Punct Termic": self._punct_termic,
-                                "Locatie Gasita": location_text
+                                "Locatie Gasita": location_text,
+                                "Ultima Actualizare": time.strftime("%Y-%m-%d %H:%M:%S")
                             }
-                            _LOGGER.info(f"Date gasite pentru {self._address}: {self._state}")
-                            return True
+                            data_gasita = True
+                            _LOGGER.info(f"Date găsite pentru {self._address}: {self._state}")
+                            break
+                
+                if data_gasita:
+                    break
             
-            # No matching location found
-            _LOGGER.info(f"Nu s-au gasit intreruperi pentru: {self._address}")
-            self._state = "Nu există întreruperi"
+            if not data_gasita:
+                # No matching location found
+                self._state = "Fără întreruperi"
+                self._attrs = {
+                    "Adresa": self._address,
+                    "Punct Termic": self._punct_termic,
+                    "Ultima Actualizare": time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "Status": "Nu s-au găsit întreruperi pentru această adresă"
+                }
+                _LOGGER.info(f"Nu s-au găsit întreruperi pentru: {self._address}")
+            
+            self._available = True
+            return True
+
+        except requests.exceptions.RequestException as e:
+            _LOGGER.error(f"Eroare de conexiune la CMTEB: {str(e)}")
+            self._state = "Eroare conexiune"
+            self._available = False
             self._attrs = {
+                "Eroare": str(e),
                 "Adresa": self._address,
-                "Punct Termic": self._punct_termic
+                "Ultima Încercare": time.strftime("%Y-%m-%d %H:%M:%S")
             }
             return False
-
+            
         except Exception as e:
             _LOGGER.error(f"Eroare la extragerea datelor de la CMTEB: {str(e)}")
-            self._state = "Eroare de conectare"
-            self._attrs = {"Eroare": str(e)}
+            self._state = "Eroare date"
+            self._available = False
+            self._attrs = {
+                "Eroare": str(e),
+                "Adresa": self._address, 
+                "Ultima Încercare": time.strftime("%Y-%m-%d %H:%M:%S")
+            }
             return False
 
     async def async_update(self):
