@@ -4,7 +4,6 @@ from datetime import timedelta
 import requests
 from bs4 import BeautifulSoup
 import time
-import random
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
@@ -14,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN, URL_CMTEB
 
 _LOGGER = logging.getLogger(__name__)
-SCAN_INTERVAL = timedelta(hours=2)  # Redus semnificativ
+SCAN_INTERVAL = timedelta(hours=2)
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -30,7 +29,7 @@ async def async_setup_entry(
         CmtebSensor(config_entry, "cauza_interventie", "Cauză Intervenție"),
         CmtebSensor(config_entry, "data_estimata_reparatie", "Dată Estimată Reparație")
     ]
-    async_add_entities(sensors, update_before_add=False)
+    async_add_entities(sensors, update_before_add=True)  # True pentru a testa imediat
 
 class CmtebSensor(SensorEntity):
     """Representation of a CMTEB Sensor."""
@@ -79,13 +78,27 @@ class CmtebSensor(SensorEntity):
     def _fetch_data(self):
         """Fetch data from CMTEB website."""
         try:
-            # Folosim HTTP direct
             headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'ro-RO,ro;q=0.9,en;q=0.8',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Connection': 'keep-alive',
             }
+
+            _LOGGER.info(f"Încerc să accesez: {URL_CMTEB}")
             
-            response = requests.get(URL_CMTEB, headers=headers, timeout=30)
+            # Folosim session pentru a gestiona redirect-urile automat
+            session = requests.Session()
+            session.headers.update(headers)
+            
+            response = session.get(
+                URL_CMTEB, 
+                timeout=30,
+                allow_redirects=True  # Permite redirect-urile
+            )
+            
+            _LOGGER.info(f"Răspuns primit: Status {response.status_code}, Redirect: {len(response.history)}")
             
             if response.status_code != 200:
                 self._state = f"Eroare HTTP {response.status_code}"
@@ -97,12 +110,30 @@ class CmtebSensor(SensorEntity):
                 }
                 return False
 
+            # Verifică dacă conținutul este HTML valid
+            if not response.content:
+                self._state = "Răspuns gol"
+                self._available = False
+                self._attrs = {
+                    "Eroare": "Serverul a returnat conținut gol",
+                    "Adresa": self._address,
+                    "Ultima Încercare": time.strftime("%Y-%m-%d %H:%M:%S")
+                }
+                return False
+
             # Parse the HTML
             soup = BeautifulSoup(response.content, 'html.parser')
+            
+            # Verifică titlul paginii pentru confirmare
+            title = soup.find('title')
+            if title:
+                _LOGGER.info(f"Titlul paginii: {title.text}")
+
             tables = soup.find_all('table')
+            _LOGGER.info(f"Am găsit {len(tables)} tabele pe pagină")
 
             if not tables:
-                self._state = "Fără date"
+                self._state = "Fără tabele"
                 self._available = True
                 self._attrs = {
                     "Adresa": self._address,
@@ -112,14 +143,17 @@ class CmtebSensor(SensorEntity):
                 return True
 
             # Caută datele pentru adresa specificată
-            for table in tables:
-                rows = table.find_all('tr')[1:]
+            data_gasita = False
+            for i, table in enumerate(tables):
+                rows = table.find_all('tr')[1:]  # Skip header row
+                _LOGGER.info(f"Tabel {i+1}: {len(rows)} rânduri")
                 
-                for row in rows:
+                for j, row in enumerate(rows):
                     cols = [ele.text.strip() for ele in row.find_all('td')]
                     
                     if len(cols) >= 5 and self._address:
                         location_text = cols[1] if len(cols) > 1 else ""
+                        _LOGGER.debug(f"Rând {j+1}: {location_text}")
                         
                         # Caută potrivire parțială în text
                         if self._address.lower() in location_text.lower():
@@ -138,26 +172,47 @@ class CmtebSensor(SensorEntity):
                                 "Adresa": self._address,
                                 "Punct Termic": self._punct_termic,
                                 "Locatie Gasita": location_text,
-                                "Ultima Actualizare": time.strftime("%Y-%m-%d %H:%M:%S")
+                                "Ultima Actualizare": time.strftime("%Y-%m-%d %H:%M:%S"),
+                                "Tabel": i + 1,
+                                "Rand": j + 1
                             }
                             self._available = True
-                            _LOGGER.info(f"Date găsite pentru {self._address}")
-                            return True
+                            _LOGGER.info(f"✅ DATE GĂSITE pentru {self._address}: {self._state}")
+                            data_gasita = True
+                            break
+                
+                if data_gasita:
+                    break
 
-            # Dacă nu s-au găsit date
-            self._state = "Fără întreruperi"
-            self._available = True
-            self._attrs = {
-                "Adresa": self._address,
-                "Punct Termic": self._punct_termic,
-                "Ultima Actualizare": time.strftime("%Y-%m-%d %H:%M:%S"),
-                "Status": "Nu s-au găsit întreruperi pentru această adresă"
-            }
+            if not data_gasita:
+                # Dacă nu s-au găsit date
+                self._state = "Fără întreruperi"
+                self._available = True
+                self._attrs = {
+                    "Adresa": self._address,
+                    "Punct Termic": self._punct_termic,
+                    "Ultima Actualizare": time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "Status": "Nu s-au găsit întreruperi pentru această adresă",
+                    "Tabele Verificate": len(tables)
+                }
+                _LOGGER.info(f"ℹ️ Nu s-au găsit întreruperi pentru: {self._address}")
+            
             return True
 
-        except Exception as e:
-            _LOGGER.error(f"Eroare la preluarea datelor: {e}")
+        except requests.exceptions.RequestException as e:
+            _LOGGER.error(f"❌ Eroare de conexiune: {e}")
             self._state = "Eroare conexiune"
+            self._available = False
+            self._attrs = {
+                "Eroare": str(e),
+                "Adresa": self._address,
+                "Ultima Încercare": time.strftime("%Y-%m-%d %H:%M:%S")
+            }
+            return False
+            
+        except Exception as e:
+            _LOGGER.error(f"❌ Eroare neașteptată: {e}")
+            self._state = "Eroare neașteptată"
             self._available = False
             self._attrs = {
                 "Eroare": str(e),
