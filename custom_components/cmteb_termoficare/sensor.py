@@ -14,7 +14,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN, URL_CMTEB
 
 _LOGGER = logging.getLogger(__name__)
-SCAN_INTERVAL = timedelta(minutes=60)  # Redus la 1 oră pentru a nu suprasolicita
+SCAN_INTERVAL = timedelta(hours=2)  # Redus semnificativ
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -30,7 +30,7 @@ async def async_setup_entry(
         CmtebSensor(config_entry, "cauza_interventie", "Cauză Intervenție"),
         CmtebSensor(config_entry, "data_estimata_reparatie", "Dată Estimată Reparație")
     ]
-    async_add_entities(sensors, update_before_add=False)  # Schimbat în False
+    async_add_entities(sensors, update_before_add=False)
 
 class CmtebSensor(SensorEntity):
     """Representation of a CMTEB Sensor."""
@@ -76,113 +76,53 @@ class CmtebSensor(SensorEntity):
         """Return a unique ID."""
         return f"{self._config_entry.entry_id}_{self._type}"
 
-    def _get_headers(self):
-        """Return random headers to mimic different browsers."""
-        user_agents = [
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0'
-        ]
-        
-        return {
-            'User-Agent': random.choice(user_agents),
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'ro-RO,ro;q=0.9,en;q=0.8',
-            'Accept-Encoding': 'gzip, deflate',
-            'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1',
-            'Cache-Control': 'max-age=0'
-        }
-
-    def _try_connect(self, use_https=True):
-        """Try to connect with retry logic."""
-        url = URL_CMTEB
-        if not use_https:
-            url = url.replace('https://', 'http://')
-            
-        for attempt in range(3):
-            try:
-                headers = self._get_headers()
-                _LOGGER.debug(f"Încercare {attempt + 1} pentru {url}")
-                
-                response = requests.get(
-                    url, 
-                    headers=headers, 
-                    timeout=20,
-                    verify=False if not use_https else True
-                )
-                response.raise_for_status()
-                return response
-                
-            except requests.exceptions.SSLError:
-                _LOGGER.warning(f"Eroare SSL la încercarea {attempt + 1}, încerc fără HTTPS")
-                if use_https:
-                    return self._try_connect(use_https=False)
-                else:
-                    raise
-                    
-            except requests.exceptions.ConnectionError as e:
-                if attempt == 2:  # Ultima încercare
-                    raise e
-                time.sleep(2)  # Așteaptă 2 secunde între încercări
-                continue
-                
-            except Exception as e:
-                if attempt == 2:
-                    raise e
-                time.sleep(2)
-                continue
-                
-        return None
-
     def _fetch_data(self):
         """Fetch data from CMTEB website."""
         try:
-            response = self._try_connect()
+            # Folosim HTTP direct
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+            }
             
-            if not response or not response.content:
-                self._state = "Eroare conexiune"
+            response = requests.get(URL_CMTEB, headers=headers, timeout=30)
+            
+            if response.status_code != 200:
+                self._state = f"Eroare HTTP {response.status_code}"
                 self._available = False
                 self._attrs = {
-                    "Eroare": "Răspuns gol de la server",
+                    "Eroare": f"Cod HTTP: {response.status_code}",
                     "Adresa": self._address,
                     "Ultima Încercare": time.strftime("%Y-%m-%d %H:%M:%S")
                 }
                 return False
 
-            # Use built-in HTML parser
+            # Parse the HTML
             soup = BeautifulSoup(response.content, 'html.parser')
-            
-            # Verifică dacă pagina conține datele așteptate
             tables = soup.find_all('table')
+
             if not tables:
-                _LOGGER.warning("Nu s-au găsit tabele pe pagină")
                 self._state = "Fără date"
                 self._available = True
                 self._attrs = {
                     "Adresa": self._address,
-                    "Status": "Pagina nu conține tabele",
+                    "Status": "Nu s-au găsit tabele pe pagină",
                     "Ultima Actualizare": time.strftime("%Y-%m-%d %H:%M:%S")
                 }
                 return True
 
-            data_gasita = False
+            # Caută datele pentru adresa specificată
             for table in tables:
-                rows = table.find_all('tr')[1:]  # Skip header row
+                rows = table.find_all('tr')[1:]
                 
                 for row in rows:
                     cols = [ele.text.strip() for ele in row.find_all('td')]
                     
-                    if len(cols) >= 5:
-                        # Check if either address or punct_termic matches
+                    if len(cols) >= 5 and self._address:
                         location_text = cols[1] if len(cols) > 1 else ""
-                        address_match = self._address and self._address.lower() in location_text.lower()
-                        punct_match = self._punct_termic and self._punct_termic.lower() in location_text.lower()
                         
-                        if address_match or punct_match:
-                            # Found matching location
+                        # Caută potrivire parțială în text
+                        if self._address.lower() in location_text.lower():
                             agent_afectat = cols[2] if len(cols) > 2 else "N/A"
                             cauza = cols[3] if len(cols) > 3 else "N/A"
                             data_estimata = cols[4] if len(cols) > 4 else "N/A"
@@ -200,29 +140,23 @@ class CmtebSensor(SensorEntity):
                                 "Locatie Gasita": location_text,
                                 "Ultima Actualizare": time.strftime("%Y-%m-%d %H:%M:%S")
                             }
-                            data_gasita = True
-                            _LOGGER.info(f"Date găsite pentru {self._address}: {self._state}")
-                            break
-                
-                if data_gasita:
-                    break
+                            self._available = True
+                            _LOGGER.info(f"Date găsite pentru {self._address}")
+                            return True
 
-            if not data_gasita:
-                # No matching location found
-                self._state = "Fără întreruperi"
-                self._attrs = {
-                    "Adresa": self._address,
-                    "Punct Termic": self._punct_termic,
-                    "Ultima Actualizare": time.strftime("%Y-%m-%d %H:%M:%S"),
-                    "Status": "Nu s-au găsit întreruperi pentru această adresă"
-                }
-                _LOGGER.info(f"Nu s-au găsit întreruperi pentru: {self._address}")
-            
+            # Dacă nu s-au găsit date
+            self._state = "Fără întreruperi"
             self._available = True
+            self._attrs = {
+                "Adresa": self._address,
+                "Punct Termic": self._punct_termic,
+                "Ultima Actualizare": time.strftime("%Y-%m-%d %H:%M:%S"),
+                "Status": "Nu s-au găsit întreruperi pentru această adresă"
+            }
             return True
 
-        except requests.exceptions.RequestException as e:
-            _LOGGER.warning(f"Eroare de conexiune la CMTEB: {str(e)}")
+        except Exception as e:
+            _LOGGER.error(f"Eroare la preluarea datelor: {e}")
             self._state = "Eroare conexiune"
             self._available = False
             self._attrs = {
@@ -231,21 +165,7 @@ class CmtebSensor(SensorEntity):
                 "Ultima Încercare": time.strftime("%Y-%m-%d %H:%M:%S")
             }
             return False
-            
-        except Exception as e:
-            _LOGGER.error(f"Eroare neașteptată: {str(e)}")
-            self._state = "Eroare neașteptată"
-            self._available = False
-            self._attrs = {
-                "Eroare": str(e),
-                "Adresa": self._address, 
-                "Ultima Încercare": time.strftime("%Y-%m-%d %H:%M:%S")
-            }
-            return False
 
     async def async_update(self):
         """Update the sensor."""
-        # Adaugă un delay random între 0-10 secunde pentru a nu suprasolicita
-        import asyncio
-        await asyncio.sleep(random.randint(0, 10))
         await self.hass.async_add_executor_job(self._fetch_data)
