@@ -1,5 +1,5 @@
 # CMTEB Termoficare pentru Home Assistant
-# v.22.11.2025.d
+## v.22.11.2025.d
 
 Integrare care extrage informații despre întreruperile la termoficare de pe site-ul CMTEB.
 
