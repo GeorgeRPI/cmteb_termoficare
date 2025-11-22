@@ -1,0 +1,7 @@
+{
+  "name": "CMTEB Termoficare",
+  "render_readme": true,
+  "homeassistant": "2023.1.0",
+  "country": ["RO"],
+  "zip_release": false
+}
