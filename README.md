@@ -18,14 +18,14 @@ title: 🔥 Status Termoficare - Precizie Puncte
 cards:
   - type: markdown
     content: |
-      ### 📍 {{ states.sensor.cmteb_agent_afectat_str_moisil_punctul_a.attributes.Adresa }}
-      **🏠 Punct Termic:** {{ states.sensor.cmteb_agent_afectat_str_moisil_punctul_a.attributes.Punct_Termic }}
+      ### 📍 {{ states.sensor.cmteb_agent_afectat_STRADA_NUME_PUNCT_TERMIC.attributes.Adresa }}
+      **🏠 Punct Termic:** {{ states.sensor.cmteb_agent_afectat_STRADA_NUME_PUNCT_TERMIC.attributes.Punct_Termic }}
     card_mod:
       style: |
         ha-card {
           background: |
             [[[
-              const state = states['sensor.cmteb_agent_afectat_str_moisil_punctul_a'].state;
+              const state = states['sensor.cmteb_agent_afectat_STRADA_NUME_PUNCT_TERMIC'].state;
               if (state === 'ÎNCĂLZIRE' || state === 'APĂ CALDĂ') return 'linear-gradient(135deg, #ff4444 0%, #cc0000 100%)';
               if (state === 'Deficiență') return 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)';
               return 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
@@ -135,16 +135,16 @@ title: 🔥 Status Termoficare CMTEB
 cards:
   - type: conditional
     conditions:
-      - entity: sensor.cmteb_agent_afectat_str_grigore_c_moisil
+      - entity: sensor.cmteb_agent_afectat_STRADA
         state_not: "Fără întreruperi"
     card:
       type: markdown
       content: |
         ### ⚠️ ÎNTRERUPERE ACTIVĂ
-        **Locație:** {{ states.sensor.cmteb_agent_afectat_str_grigore_c_moisil.attributes.Adresa }}
-        **Agent afectat:** {{ states.sensor.cmteb_agent_afectat_str_grigore_c_moisil.state }}
-        **Cauză:** {{ states.sensor.cmteb_cauza_interventie_str_grigore_c_moisil.state }}
-        **Data estimată reparare:** {{ states.sensor.cmteb_data_estimata_reparatie_str_grigore_c_moisil.state }}
+        **Locație:** {{ states.sensor.cmteb_agent_afectat_STRADA.attributes.Adresa }}
+        **Agent afectat:** {{ states.sensor.cmteb_agent_afectat_STRADA.state }}
+        **Cauză:** {{ states.sensor.cmteb_cauza_interventie_STRADA.state }}
+        **Data estimată reparare:** {{ states.sensor.cmteb_data_estimata_reparatie_STRADA.state }}
       card_mod:
         style: |
           ha-card {
@@ -155,13 +155,13 @@ cards:
           }
   - type: conditional
     conditions:
-      - entity: sensor.cmteb_agent_afectat_str_grigore_c_moisil
+      - entity: sensor.cmteb_agent_afectat_STRADA
         state: "Fără întreruperi"
     card:
       type: markdown
       content: |
         ### ✅ NICI O ÎNTRERUPERE
-        **Locație:** {{ states.sensor.cmteb_agent_afectat_str_grigore_c_moisil.attributes.Adresa }}
+        **Locație:** {{ states.sensor.cmteb_agent_afectat_STRADA.attributes.Adresa }}
         **Status:** Toate serviciile funcționează normal 🎉
       card_mod:
         style: |
@@ -172,13 +172,13 @@ cards:
           }
   - type: entities
     entities:
-      - entity: sensor.cmteb_agent_afectat_str_grigore_c_moisil
+      - entity: sensor.cmteb_agent_afectat_STRADA
         name: Agent Termic Afectat
         icon: mdi:fire-circle
-      - entity: sensor.cmteb_cauza_interventie_str_grigore_c_moisil
+      - entity: sensor.cmteb_cauza_interventie_STRADA
         name: Motivul Intervenției
         icon: mdi:tooltip-text
-      - entity: sensor.cmteb_data_estimata_reparatie_str_grigore_c_moisil
+      - entity: sensor.cmteb_data_estimata_reparatie_STRADA
         name: Data Estimată Reparare
         icon: mdi:calendar-check
     title: Detalii Tehnice
@@ -189,13 +189,13 @@ cards:
 ```yaml
 type: glance
 entities:
-  - entity: sensor.cmteb_agent_afectat_str_grigore_c_moisil
+  - entity: sensor.cmteb_agent_afectat_STRADA
     name: Agent Termic
-  - entity: sensor.cmteb_cauza_interventie_str_grigore_c_moisil
+  - entity: sensor.cmteb_cauza_interventie_STRADA
     name: Cauză
-  - entity: sensor.cmteb_data_estimata_reparatie_str_grigore_c_moisil
+  - entity: sensor.cmteb_data_estimata_reparatie_STRADA
     name: Data Reparare
-title: 🏠 Termoficare - Grigore Moisil
+title: 🏠 Termoficare - STRADA
 show_state: true
 
 ````
@@ -208,10 +208,10 @@ show_state: true
 alias: "Alertă Întrerupere Termoficare"
 trigger:
   - platform: state
-    entity_id: sensor.cmteb_agent_afectat_str_grigore_c_moisil
+    entity_id: sensor.cmteb_agent_afectat_STRADA
     to: "ÎNCĂLZIRE"
   - platform: state
-    entity_id: sensor.cmteb_agent_afectat_str_grigore_c_moisil
+    entity_id: sensor.cmteb_agent_afectat_STRADA
     to: "APĂ CALDĂ"
 action:
   - service: notify.mobile_app_telefonul_tau
@@ -220,9 +220,9 @@ action:
       message: |
         S-a declanșat o întrerupere la termoficare!
         
-        📍 Locație: {{ states.sensor.cmteb_agent_afectat_str_grigore_c_moisil.attributes.Adresa }}
-        🔥 Agent afectat: {{ states.sensor.cmteb_agent_afectat_str_grigore_c_moisil.state }}
-        🛠️ Cauză: {{ states.sensor.cmteb_cauza_interventie_str_grigore_c_moisil.state }}
+        📍 Locație: {{ states.sensor.cmteb_agent_afectat_STRADA.attributes.Adresa }}
+        🔥 Agent afectat: {{ states.sensor.cmteb_agent_afectat_STRADA.state }}
+        🛠️ Cauză: {{ states.sensor.cmteb_cauza_interventie_STRADA.state }}
 
 ```
 ---
