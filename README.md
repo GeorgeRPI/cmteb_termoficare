@@ -105,8 +105,8 @@ type: vertical-stack
 cards:
   - type: markdown
     content: >
-      ## 🏘️ {{ state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
-      'Adresa') | default('Locatie') }}
+      # 🏘️ {{ state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
+      'Adresa') | default('Locație') }}
     card_mod:
       style: |
         ha-card {
@@ -116,43 +116,45 @@ cards:
           font-weight: bold;
           padding: 15px;
           border-radius: 10px 10px 0 0;
+          box-shadow: var(--box-shadow);
         }
   - type: markdown
     content: >
-      **📍 Stradă:** {{
+      ## 🛣️ Stradă: {{
       state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC', 'Adresa') }}
 
-      **🏠 Punct Termic:** {{
+      ## 🔥 Punct Termic: {{
       state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
       'Punct_Termic') | default('General') }}
     card_mod:
       style: |
         ha-card {
           background: var(--card-background-color);
-          padding: 10px;
+          padding: 15px;
+          border-left: 4px solid var(--primary-color);
         }
   - type: custom:button-card
     entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
     name: |
       [[[
-        if (entity.state === 'ÎNCĂLZIRE') return 'ÎNCĂLZIRE (INC)';
-        if (entity.state === 'APĂ CALDĂ') return 'APĂ CALDĂ (ACC)';
-        if (entity.state.includes('Deficienta')) return entity.state;
-        return 'FUNCȚIONAL';
+        if (entity.state === 'ÎNCĂLZIRE') return '🔥 ÎNCĂLZIRE (INC)';
+        if (entity.state === 'APĂ CALDĂ') return '🚿 APĂ CALDĂ (ACC)';
+        if (entity.state.includes('Deficienta')) return '⚠️ ' + entity.state;
+        return '✅ FUNCȚIONAL';
       ]]]
     icon: |
       [[[
-        if (entity.state === 'ÎNCĂLZIRE') return 'mdi:radiator-off';
+        if (entity.state === 'ÎNCĂLZIRE') return 'mdi:radiator-disabled';
         if (entity.state === 'APĂ CALDĂ') return 'mdi:water-off';
-        if (entity.state.includes('Deficienta')) return 'mdi:alert';
-        return 'mdi:check-circle';
+        if (entity.state.includes('Deficienta')) return 'mdi:alert-circle-outline';
+        return 'mdi:check-circle-outline';
       ]]]
     state_display: |
       [[[
-        if (entity.state === 'ÎNCĂLZIRE') return 'OPRIȚĂ';
-        if (entity.state === 'APĂ CALDĂ') return 'OPRIȚĂ';
-        if (entity.state.includes('Deficienta')) return 'DEFICIENT';
-        return 'ACTIV';
+        if (entity.state === 'ÎNCĂLZIRE') return '🔴 OPRIȚĂ';
+        if (entity.state === 'APĂ CALDĂ') return '🔴 OPRIȚĂ';
+        if (entity.state.includes('Deficienta')) return '🔵 DEFICIENT';
+        return '🟢 ACTIV';
       ]]]
     styles:
       card:
@@ -167,33 +169,63 @@ cards:
         - border-radius: 10px
         - padding: 20px
         - text-align: center
+        - box-shadow: var(--box-shadow)
+        - border: 2px solid white
       icon:
         - color: white
-        - width: 40px
-        - height: 40px
+        - width: 35px
+        - height: 35px
+      name:
+        - font-size: 23px
+        - margin-bottom: 8px
+      state:
+        - font-size: 14px
+        - font-weight: normal
   - type: grid
     columns: 2
+    square: false
     cards:
       - type: custom:button-card
         entity: sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC
-        name: Motiv
+        name: 🛠️ Cauza
         icon: mdi:hammer-wrench
         show_state: true
         styles:
           card:
             - background-color: var(--card-background-color)
             - border-radius: 8px
-            - padding: 10px
+            - padding: 12px
+            - border-left: 4px solid
+            - box-shadow: var(--box-shadow)
+          name:
+            - font-size: 12px
+            - font-weight: bold
+            - color: var(--primary-text-color)
+          state:
+            - font-size: 13px
+            - font-weight: normal
+            - color: var(--secondary-text-color)
       - type: custom:button-card
         entity: sensor.cmteb_data_estimata_reparatie_STRADA_PUNCT_TERMIC
-        name: Data Reparare
+        name: 📅 Data Reparare
         icon: mdi:calendar-clock
         show_state: true
         styles:
           card:
             - background-color: var(--card-background-color)
             - border-radius: 8px
-            - padding: 10px
+            - padding: 12px
+            - border-left: 4px solid
+            - box-shadow: var(--box-shadow)
+          name:
+            - font-size: 12px
+            - font-weight: bold
+            - color: var(--primary-text-color)
+          state:
+            - font-size: 13px
+            - font-weight: normal
+            - color: var(--secondary-text-color)
+
 ```
 
 ### 📱 Card 2: Stare Detaliată v.1
