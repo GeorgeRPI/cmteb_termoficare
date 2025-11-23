@@ -98,7 +98,129 @@ Fiecare adresă adăugată creează 3 senzori unici:
 
 ## 🎨 Carduri Lovelace
 
-### 📱 Card 1: Stare Detaliată v.2
+### 📱 Card 1: Stare Detaliată v.3
+
+```yaml
+type: vertical-stack
+cards:
+  - type: markdown
+    content: >
+      # 🛣️ {{ state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
+      'Adresa') }}
+
+
+      ## **🔥 Punct Termic:** {{
+      state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
+      'Punct_Termic') | default('General') }}
+    card_mod:
+      style: |
+        ha-card {
+          background: var(--primary-color);
+          color: white;
+          text-align: center;
+          font-weight: bold;
+          padding: 20px;
+          border-radius: 10px 10px 0 0;
+          box-shadow: var(--box-shadow);
+
+        }
+        h2 {
+          font-size: 1.5em;
+          margin-bottom: 10px;
+        }
+  - type: custom:button-card
+    entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
+    name: |
+      [[[
+        if (entity.state === 'ÎNCĂLZIRE') return '🔥 ÎNCĂLZIRE (INC)';
+        if (entity.state === 'APĂ CALDĂ') return '🚿 APĂ CALDĂ (ACC)';
+        if (entity.state.includes('Deficienta')) return '⚠️ ' + entity.state;
+        return '✅ FUNCȚIONAL';
+      ]]]
+    icon: |
+      [[[
+        if (entity.state === 'ÎNCĂLZIRE') return 'mdi:radiator-disabled';
+        if (entity.state === 'APĂ CALDĂ') return 'mdi:water-off';
+        if (entity.state.includes('Deficienta')) return 'mdi:alert-circle-outline';
+        return 'mdi:check-circle-outline';
+      ]]]
+    state_display: |
+      [[[
+        if (entity.state === 'ÎNCĂLZIRE') return '🔴 OPRIȚĂ';
+        if (entity.state === 'APĂ CALDĂ') return '🔴 OPRIȚĂ';
+        if (entity.state.includes('Deficienta')) return '🔴 DEFICIENT';
+        return '🟢 ACTIV';
+      ]]]
+    styles:
+      card:
+        - background-color: |
+            [[[
+              if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'APĂ CALDĂ' || entity.state.includes('Deficienta')) return '#ff4444';
+              return '#4CAF50';
+            ]]]
+        - color: white
+        - font-weight: bold
+        - border-radius: 10px
+        - padding: 20px
+        - text-align: center
+        - box-shadow: var(--box-shadow)
+        - border: 2px solid white
+      icon:
+        - color: white
+        - width: 35px
+        - height: 35px
+      name:
+        - font-size: 20px
+        - margin-bottom: 8px
+      state:
+        - font-size: 14px
+        - font-weight: normal
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: custom:button-card
+        entity: sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC
+        name: 🛠️ Motiv Intervenție
+        icon: mdi:hammer-wrench
+        show_state: true
+        styles:
+          card:
+            - background-color: var(--card-background-color)
+            - border-radius: 8px
+            - padding: 12px
+            - border-left: 2px solid
+            - box-shadow: var(--box-shadow)
+          name:
+            - font-size: 12px
+            - font-weight: bold
+            - color: var(--primary-text-color)
+          state:
+            - font-size: 13px
+            - font-weight: normal
+            - color: var(--secondary-text-color)
+      - type: custom:button-card
+        entity: sensor.cmteb_data_estimata_reparatie_STRADA_PUNCT_TERMIC
+        name: 📅 Data Reparare
+        icon: mdi:calendar-clock
+        show_state: true
+        styles:
+          card:
+            - background-color: var(--card-background-color)
+            - border-radius: 8px
+            - padding: 12px
+            - border-left: 2px solid
+            - box-shadow: var(--box-shadow)
+          name:
+            - font-size: 12px
+            - font-weight: bold
+            - color: var(--primary-text-color)
+          state:
+            - font-size: 13px
+            - font-weight: normal
+            - color: var(--secondary-text-color)
+```
+### 📱 Card 2: Stare Detaliată v.2
 
 ```yaml
 type: vertical-stack
@@ -228,7 +350,7 @@ cards:
 
 ```
 
-### 📱 Card 2: Stare Detaliată v.1
+### 📱 Card 3: Stare Detaliată v.1
 
 ```yaml
 type: custom:vertical-stack-in-card
@@ -283,21 +405,6 @@ cards:
         name: Data Estimată Reparare
         icon: mdi:calendar-check
     title: Detalii Tehnice
-
-````
-### 📱 Card 3: Vizualizare Compactă
-
-```yaml
-type: glance
-entities:
-  - entity: sensor.cmteb_agent_afectat_STRADA
-    name: Agent Termic
-  - entity: sensor.cmteb_cauza_interventie_STRADA
-    name: Cauză
-  - entity: sensor.cmteb_data_estimata_reparatie_STRADA
-    name: Data Reparare
-title: 🏠 Termoficare - STRADA
-show_state: true
 
 ````
 ---
