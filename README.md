@@ -74,6 +74,7 @@ Integrarea recunoaște automat toate variantele de scriere pentru străzi:
 - `"Sos Pantelimon"`
 - `"drm Taberei"`
 - `"p-ta Romană"`
+- `"se poate introduce si doar numele strazi"`
 
 ---
 
