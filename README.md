@@ -1,42 +1,13 @@
-# 🔥 CMTEB Termoficare - Integrare Home Assistant
+![Logo Proiect](https://cmteb.ro/_incluse/img/sigla.png)
+# 🔥 CMTEB Termoficare - 🏠 Integrare pentru Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 [![Version](https://img.shields.io/badge/version-23.11.2025.a-blue.svg)](https://github.com/your-username/cmteb_termoficare)
 [![Home Assistant](https://img.shields.io/badge/Home_Assistant-2023.1%2B-green.svg)](https://www.home-assistant.io/)
 
-Integrare avansată pentru monitorizarea în timp real a întreruperilor la termoficare de pe site-ul CMTEB București.
+Integrare pentru monitorizarea în timp real a întreruperilor in furnizarea agentului termic a Companiei Municipale TERMOENERGETICA București.
 
----
-## ✨ **UPDATE - v.23.11.2025.a 🔥 Status Termoficare CMTEB**
-- ✅ **Cautare mai precisa**
-  - 🛣️ dupa strada
-  - 🏭 dupa punct termic
-- ✅ **Card nou** 
-```yaml
-type: custom:vertical-stack-in-card
-title: 🔥 Status Termoficare - Precizie Puncte
-cards:
-  - type: markdown
-    content: |
-      ### 📍 {{ states.sensor.cmteb_agent_afectat_STRADA_NUME_PUNCT_TERMIC.attributes.Adresa }}
-      **🏠 Punct Termic:** {{ states.sensor.cmteb_agent_afectat_STRADA_NUME_PUNCT_TERMIC.attributes.Punct_Termic }}
-    card_mod:
-      style: |
-        ha-card {
-          background: |
-            [[[
-              const state = states['sensor.cmteb_agent_afectat_STRADA_NUME_PUNCT_TERMIC'].state;
-              if (state === 'ÎNCĂLZIRE' || state === 'APĂ CALDĂ') return 'linear-gradient(135deg, #ff4444 0%, #cc0000 100%)';
-              if (state === 'Deficiență') return 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)';
-              return 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
-            ]]];
-          color: white;
-          padding: 15px;
-          border-radius: 12px;
-          text-align: center;
-        }
 
-```
 ---
 
 ## 🚀 Caracteristici
