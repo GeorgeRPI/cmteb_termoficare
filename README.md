@@ -98,7 +98,105 @@ Fiecare adresă adăugată creează 3 senzori unici:
 
 ## 🎨 Carduri Lovelace
 
-### 📱 Card 1: Stare Detaliată (Recomandat)
+### 📱 Card 1: Stare Detaliată v.2
+
+```yaml
+type: vertical-stack
+cards:
+  - type: markdown
+    content: >
+      ## 🏘️ {{ state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
+      'Adresa') | default('Locatie') }}
+    card_mod:
+      style: |
+        ha-card {
+          background: var(--primary-color);
+          color: white;
+          text-align: center;
+          font-weight: bold;
+          padding: 15px;
+          border-radius: 10px 10px 0 0;
+        }
+  - type: markdown
+    content: >
+      **📍 Stradă:** {{
+      state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC', 'Adresa') }}
+
+      **🏠 Punct Termic:** {{
+      state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
+      'Punct_Termic') | default('General') }}
+    card_mod:
+      style: |
+        ha-card {
+          background: var(--card-background-color);
+          padding: 10px;
+        }
+  - type: custom:button-card
+    entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
+    name: |
+      [[[
+        if (entity.state === 'ÎNCĂLZIRE') return 'ÎNCĂLZIRE (INC)';
+        if (entity.state === 'APĂ CALDĂ') return 'APĂ CALDĂ (ACC)';
+        if (entity.state.includes('Deficienta')) return entity.state;
+        return 'FUNCȚIONAL';
+      ]]]
+    icon: |
+      [[[
+        if (entity.state === 'ÎNCĂLZIRE') return 'mdi:radiator-off';
+        if (entity.state === 'APĂ CALDĂ') return 'mdi:water-off';
+        if (entity.state.includes('Deficienta')) return 'mdi:alert';
+        return 'mdi:check-circle';
+      ]]]
+    state_display: |
+      [[[
+        if (entity.state === 'ÎNCĂLZIRE') return 'OPRIȚĂ';
+        if (entity.state === 'APĂ CALDĂ') return 'OPRIȚĂ';
+        if (entity.state.includes('Deficienta')) return 'DEFICIENT';
+        return 'ACTIV';
+      ]]]
+    styles:
+      card:
+        - background-color: |
+            [[[
+              if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'APĂ CALDĂ') return '#ff4444';
+              if (entity.state.includes('Deficienta')) return '#2196F3';
+              return '#4CAF50';
+            ]]]
+        - color: white
+        - font-weight: bold
+        - border-radius: 10px
+        - padding: 20px
+        - text-align: center
+      icon:
+        - color: white
+        - width: 40px
+        - height: 40px
+  - type: grid
+    columns: 2
+    cards:
+      - type: custom:button-card
+        entity: sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC
+        name: Motiv
+        icon: mdi:hammer-wrench
+        show_state: true
+        styles:
+          card:
+            - background-color: var(--card-background-color)
+            - border-radius: 8px
+            - padding: 10px
+      - type: custom:button-card
+        entity: sensor.cmteb_data_estimata_reparatie_STRADA_PUNCT_TERMIC
+        name: Data Reparare
+        icon: mdi:calendar-clock
+        show_state: true
+        styles:
+          card:
+            - background-color: var(--card-background-color)
+            - border-radius: 8px
+            - padding: 10px
+```
+
+### 📱 Card 2: Stare Detaliată v.1
 
 ```yaml
 type: custom:vertical-stack-in-card
@@ -155,7 +253,7 @@ cards:
     title: Detalii Tehnice
 
 ````
-### 📱 Card 2: Vizualizare Compactă
+### 📱 Card 3: Vizualizare Compactă
 
 ```yaml
 type: glance
