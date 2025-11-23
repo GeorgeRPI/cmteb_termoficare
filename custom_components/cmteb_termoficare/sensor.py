@@ -39,8 +39,8 @@ async def async_setup_entry(
     address = config_entry.data.get("adresa")
     punct_termic = config_entry.data.get("punct_termic", "")
     
-    # Generează un nume unic pentru senzori bazat pe adresă
-    address_slug = _create_address_slug(address)
+    # Generează un nume unic pentru senzori bazat pe adresă și punct termic
+    address_slug = _create_address_slug(address, punct_termic)
 
     sensors = [
         CmtebSensor(config_entry, "agent_afectat", "Agent Termic Afectat", address_slug),
@@ -49,10 +49,14 @@ async def async_setup_entry(
     ]
     async_add_entities(sensors, update_before_add=True)
 
-def _create_address_slug(address):
-    """Creează un slug unic pentru adresă."""
+def _create_address_slug(address, punct_termic=""):
+    """Creează un slug unic pentru adresă și punct termic."""
     # Curăță adresa pentru a crea un nume de entitate valid
     slug = address.lower().strip()
+    
+    # Adaugă punctul termic dacă există
+    if punct_termic:
+        slug += "_" + punct_termic.lower().strip()
     
     # Înlocuiește spații și caractere speciale
     slug = re.sub(r'[^\w\s]', '', slug)  # Remove special characters
@@ -86,29 +90,6 @@ def _normalize_address(address: str) -> str:
     
     return normalized.strip()
 
-def _addresses_match(user_address: str, site_address: str) -> bool:
-    """Verifică dacă două adrese se potrivesc, ținând cont de prescurtări."""
-    if not user_address or not site_address:
-        return False
-    
-    # Normalizează ambele adrese
-    user_norm = _normalize_address(user_address)
-    site_norm = _normalize_address(site_address)
-    
-    # Verifică potrivire exactă după normalizare
-    if user_norm in site_norm or site_norm in user_norm:
-        return True
-    
-    # Verifică potrivire parțială fără prescurtări (doar numele străzii)
-    user_clean = _extract_street_name(user_address)
-    site_clean = _extract_street_name(site_address)
-    
-    if user_clean and site_clean:
-        return user_clean in site_clean or site_clean in user_clean
-    
-    # Fallback la căutarea simplă
-    return user_address.lower() in site_address.lower()
-
 def _extract_street_name(address: str) -> str:
     """Extrage doar numele străzii din adresă (fără tipul străzii)."""
     if not address:
@@ -137,6 +118,62 @@ def _extract_street_name(address: str) -> str:
     # Dacă nu găsește tip de stradă, returnează adresa completă
     return address_lower
 
+def _find_exact_match(user_address: str, user_punct_termic: str, site_location: str) -> bool:
+    """
+    Caută potrivire exactă între adresa+punct_termic utilizator și locația de pe site.
+    
+    Logica de căutare:
+    1. Verifică dacă punctul termic exact există în locația site-ului
+    2. Verifică dacă adresa exactă există în locația site-ului  
+    3. Fallback la căutarea parțială doar pentru adresă
+    """
+    if not site_location:
+        return False
+    
+    site_location_lower = site_location.lower()
+    user_address_lower = user_address.lower() if user_address else ""
+    user_punct_lower = user_punct_termic.lower() if user_punct_termic else ""
+    
+    _LOGGER.debug(f"Căutare precisă - Adresă: '{user_address}', Punct: '{user_punct_termic}', Site: '{site_location}'")
+    
+    # Cazul 1: Avem atât adresă cât și punct termic specific
+    if user_address and user_punct_termic:
+        # Verifică dacă ambele sunt prezente în locația site-ului
+        address_in_site = user_address_lower in site_location_lower
+        punct_in_site = user_punct_lower in site_location_lower
+        
+        if address_in_site and punct_in_site:
+            _LOGGER.info(f"✅ Potrivire exactă găsită: '{user_address}' + '{user_punct_termic}' în '{site_location}'")
+            return True
+        
+        # Dacă punctul termic este exact în locație, consideră potrivire
+        if punct_in_site and any(word in site_location_lower for word in user_punct_lower.split()):
+            _LOGGER.info(f"✅ Potrivire după punct termic: '{user_punct_termic}' în '{site_location}'")
+            return True
+    
+    # Cazul 2: Doar adresă fără punct termic specific
+    elif user_address and not user_punct_termic:
+        # Verifică dacă adresa este în locația site-ului
+        if user_address_lower in site_location_lower:
+            _LOGGER.info(f"✅ Potrivire după adresă: '{user_address}' în '{site_location}'")
+            return True
+        
+        # Verifică cu normalizare
+        user_norm = _normalize_address(user_address)
+        site_norm = _normalize_address(site_location)
+        if user_norm and site_norm and user_norm in site_norm:
+            _LOGGER.info(f"✅ Potrivire normalizată: '{user_address}' în '{site_location}'")
+            return True
+    
+    # Cazul 3: Doar punct termic fără adresă specifică
+    elif user_punct_termic and not user_address:
+        if user_punct_lower in site_location_lower:
+            _LOGGER.info(f"✅ Potrivire doar punct termic: '{user_punct_termic}' în '{site_location}'")
+            return True
+    
+    _LOGGER.debug(f"❌ Nu s-a găsit potrivire precisă pentru '{user_address}' + '{user_punct_termic}' în '{site_location}'")
+    return False
+
 class CmtebSensor(SensorEntity):
     """Representation of a CMTEB Sensor."""
 
@@ -160,7 +197,10 @@ class CmtebSensor(SensorEntity):
     @property
     def friendly_name(self):
         """Return the friendly name of the sensor."""
-        return f"CMTEB {self._friendly_name} - {self._address}"
+        base_name = f"CMTEB {self._friendly_name}"
+        if self._punct_termic:
+            return f"{base_name} - {self._address} ({self._punct_termic})"
+        return f"{base_name} - {self._address}"
 
     @property
     def state(self):
@@ -183,7 +223,7 @@ class CmtebSensor(SensorEntity):
         return f"{self._config_entry.entry_id}_{self._type}"
 
     def _fetch_data(self):
-        """Fetch data from CMTEB website."""
+        """Fetch data from CMTEB website with precise matching."""
         try:
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -209,7 +249,8 @@ class CmtebSensor(SensorEntity):
                 self._attrs = {
                     "Eroare": f"Cod HTTP: {response.status_code}",
                     "Adresa": self._address,
-                    "Ultima Încercare": time.strftime("%Y-%m-%d %H:%M:%S")
+                    "Punct_Termic": self._punct_termic,
+                    "Ultima_Încercare": time.strftime("%Y-%m-%d %H:%M:%S")
                 }
                 return False
 
@@ -222,15 +263,14 @@ class CmtebSensor(SensorEntity):
                 self._available = True
                 self._attrs = {
                     "Adresa": self._address,
+                    "Punct_Termic": self._punct_termic,
                     "Status": "Nu s-au găsit tabele pe pagină",
-                    "Ultima Actualizare": time.strftime("%Y-%m-%d %H:%M:%S")
+                    "Ultima_Actualizare": time.strftime("%Y-%m-%d %H:%M:%S")
                 }
                 return True
 
-            # Caută datele pentru adresa specificată
+            # Caută datele pentru adresa + punct termic specific
             data_gasita = False
-            best_match = None
-            best_match_score = 0
             
             for table in tables:
                 rows = table.find_all('tr')[1:]  # Skip header row
@@ -238,11 +278,11 @@ class CmtebSensor(SensorEntity):
                 for row in rows:
                     cols = [ele.text.strip() for ele in row.find_all('td')]
                     
-                    if len(cols) >= 5 and self._address:
+                    if len(cols) >= 5:
                         location_text = cols[1] if len(cols) > 1 else ""
                         
-                        # Verifică potrivirea inteligentă
-                        if _addresses_match(self._address, location_text):
+                        # Verifică potrivirea precisă cu adresa + punct termic
+                        if _find_exact_match(self._address, self._punct_termic, location_text):
                             agent_afectat = cols[2] if len(cols) > 2 else "N/A"
                             cauza = cols[3] if len(cols) > 3 else "N/A"
                             data_estimata = cols[4] if len(cols) > 4 else "N/A"
@@ -256,31 +296,30 @@ class CmtebSensor(SensorEntity):
                             
                             self._attrs = {
                                 "Adresa": self._address,
-                                "Punct Termic": self._punct_termic,
-                                "Locatie Gasita": location_text,
-                                "Adresa Cautata": self._address,
-                                "Ultima Actualizare": time.strftime("%Y-%m-%d %H:%M:%S"),
-                                "Metoda Potrivire": "inteligenta"
+                                "Punct_Termic": self._punct_termic,
+                                "Locatie_Gasita": location_text,
+                                "Ultima_Actualizare": time.strftime("%Y-%m-%d %H:%M:%S"),
+                                "Metoda_Potrivire": "precisa_adresa_punct"
                             }
                             self._available = True
                             data_gasita = True
-                            _LOGGER.info(f"✅ Date găsite pentru '{self._address}' în locația '{location_text}'")
+                            _LOGGER.info(f"✅ Date găsite pentru '{self._address}' + '{self._punct_termic}' în locația '{location_text}'")
                             break
                 
                 if data_gasita:
                     break
 
             if not data_gasita:
-                # Dacă nu s-au găsit date
+                # Dacă nu s-au găsit date pentru combinația exactă
                 self._state = "Fără întreruperi"
                 self._available = True
                 self._attrs = {
                     "Adresa": self._address,
-                    "Punct Termic": self._punct_termic,
-                    "Ultima Actualizare": time.strftime("%Y-%m-%d %H:%M:%S"),
-                    "Status": "Nu s-au găsit întreruperi pentru această adresă"
+                    "Punct_Termic": self._punct_termic,
+                    "Ultima_Actualizare": time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "Status": "Nu s-au găsit întreruperi pentru această combinație adresă+punct termic"
                 }
-                _LOGGER.info(f"ℹ️ Nu s-au găsit întreruperi pentru: {self._address}")
+                _LOGGER.info(f"ℹ️ Nu s-au găsit întreruperi pentru: '{self._address}' + '{self._punct_termic}'")
             
             return True
 
@@ -291,7 +330,8 @@ class CmtebSensor(SensorEntity):
             self._attrs = {
                 "Eroare": str(e),
                 "Adresa": self._address,
-                "Ultima Încercare": time.strftime("%Y-%m-%d %H:%M:%S")
+                "Punct_Termic": self._punct_termic,
+                "Ultima_Încercare": time.strftime("%Y-%m-%d %H:%M:%S")
             }
             return False
 
