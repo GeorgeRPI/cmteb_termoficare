@@ -1,4 +1,4 @@
-![Logo Proiect](https://cmteb.ro/_incluse/img/sigla.png)
+![Logo Proiect](images/logo.png)
 # 🔥 CMTEB Termoficare - 🏠 Integrare pentru Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
