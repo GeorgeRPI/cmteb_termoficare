@@ -9,9 +9,9 @@ Integrare avansată pentru monitorizarea în timp real a întreruperilor la term
 ---
 ## ✨ **UPDATE - v.23.11.2025.a 🔥 Status Termoficare CMTEB**
 - ✅ **Cautare mai precisa**
-       - dupa strada
-       - dupa punct termic
-- ✅ ** Card nou
+  - 🛣️ dupa strada
+  - 🏭 dupa punct termic
+- ✅ **Card nou** 
 ```yaml
 type: custom:vertical-stack-in-card
 title: 🔥 Status Termoficare - Precizie Puncte
@@ -95,7 +95,7 @@ Integrarea recunoaște automat toate variantele de scriere pentru străzi:
 
 ### Pasul 2: Completează Datele
 - **📝 Adresa:** Introdu adresa în orice variantă
-- **🏠 Punct Termic (opțional):** Numele punctului termic specific
+- **🏭 Punct Termic (opțional):** Numele punctului termic specific
 
 ### 📋 Exemple Adrese Valide
 - `"str Grigore C. Moisil"`
