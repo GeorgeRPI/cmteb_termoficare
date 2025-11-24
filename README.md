@@ -135,10 +135,10 @@ cards:
       [[[
         if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'Oprire INC') return '🔥 ÎNCĂLZIRE (INC)';
         if (entity.state === 'APĂ CALDĂ' || entity.state === 'Oprire ACC') return '🚿 APĂ CALDĂ (ACC)';
-        if (entity.state === 'Oprire ACC/INC') return 'OPRITĂ<br> 🚿 APA CALDĂ si 🔥 ÎNCĂLZIRE'; 
+        if (entity.state === 'Oprire ACC/INC') return 'OPRITĂ<br> 🚿 APA CALDĂ si 🔥 ÎNCĂLZIREA'; 
         if (entity.state === 'Deficienta INC') return '⚠️ DEFICIENTĂ 🔥 INCALZIRE';
         if (entity.state === 'Deficienta ACC') return '⚠️ DEFICIENTĂ 🚿 APA CALDA';
-        if (entity.state === 'Deficienta ACC/INC') return '⚠️ DEFICIENTĂ<br> 🚿 APA CALDĂ si 🔥 ÎNCĂLZIRE';
+        if (entity.state === 'Deficienta ACC/INC') return '⚠️ DEFICIENTĂ<br> 🚿 APĂ CALDĂ si 🔥 ÎNCĂLZIRE';
         return '✅ SISTEM FUNCȚIONAL';
       ]]]
     icon: |
