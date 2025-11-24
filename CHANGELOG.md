@@ -3,7 +3,7 @@
  **Cautare mai precisa**
  - 🛣️ dupa strada
  - 🏭 dupa punct termic
- - Strada si punctul termic sunt obligatorii pentru o precize buna (ex. pe pantelimon sunt vro 20 de punte termice, daca nu se pune si punctul termic integrarea va afisa eronat datele).
+ - Strada si punctul termic sunt obligatorii pentru o precize buna (ex. pe pantelimon sunt vro 20 de puncte termice, daca nu se pune si punctul termic integrarea va afisa eronat datele).
  - Punctul termic il gasiti cand nu este defectiune pe *https://cmteb.ro/harta_stare_sistem_termoficare_bucuresti.php* sau cand este defectiune, se gasesc ambele pe *https://cmteb.ro/functionare_sistem_termoficare.php*
 
 ---
