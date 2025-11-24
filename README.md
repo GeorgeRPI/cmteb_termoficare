@@ -117,7 +117,7 @@ cards:
     card_mod:
       style: |
         ha-card {
-          background: var(--primary-color);
+          background: #4b0082;
           color: white;
           text-align: center;
           font-weight: bold;
