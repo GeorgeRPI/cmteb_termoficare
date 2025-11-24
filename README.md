@@ -90,10 +90,11 @@ Fiecare adresă adăugată creează 3 senzori unici:
 | `sensor.cmteb_data_estimata_reparatie_[nume_adresa]` | Data estimată reparare | `"25.11.2025 18:00"` |
 
 ### 🏷️ Exemple Nume Senzori
-| Adresa Introdusă | Entity ID Generat |
-|------------------|-------------------|
-| `Str Grigore C. Moisil` | `sensor.cmteb_agent_afectat_str_grigore_c_moisil` |
-| `Bd. Unirii 15` | `sensor.cmteb_agent_afectat_bd_unirii_15` |
+| Adresa Introdusă | Punct termic |Entity ID Generat |
+|------------------|-------------------|-------------------|
+| `Str Grigore C. Moisil` | `Moisil 1` | `sensor.cmteb_agent_afectat_str_grigore_c_moisil_moisil_1` |
+| `Bd. Unirii 15` | `Unirii tronson 2` | `sensor.cmteb_agent_afectat_bd_unirii_15_unirii_tronson_2` |
+
 
 ---
 
