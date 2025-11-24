@@ -111,8 +111,8 @@ cards:
 
 
       ## **🔥 Punct Termic:** {{
-      state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
-      'Punct_Termic') | default('General') }}
+      state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC', 'Punct_Termic')
+      | default('General') }}
     card_mod:
       style: |
         ha-card {
@@ -120,7 +120,7 @@ cards:
           color: white;
           text-align: center;
           font-weight: bold;
-          padding: 20px;
+          padding: 15px;
           border-radius: 10px 10px 0 0;
           box-shadow: var(--box-shadow);
 
@@ -133,52 +133,58 @@ cards:
     entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
     name: |
       [[[
-        if (entity.state === 'ÎNCĂLZIRE') return '🔥 ÎNCĂLZIRE (INC)';
-        if (entity.state === 'APĂ CALDĂ') return '🚿 APĂ CALDĂ (ACC)';
-        if (entity.state.includes('Deficienta')) return '⚠️ ' + entity.state;
-        return '✅ FUNCȚIONAL';
+        if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'Oprire INC') return '🔥 ÎNCĂLZIRE (INC)';
+        if (entity.state === 'APĂ CALDĂ' || entity.state === 'Oprire ACC') return '🚿 APĂ CALDĂ (ACC)';
+        if (entity.state === 'Oprire ACC/INC') return 'OPRITĂ<br> 🚿 APA CALDĂ si 🔥 ÎNCĂLZIREA'; 
+        if (entity.state === 'Deficienta INC') return '⚠️ DEFICIENTĂ 🔥 INCALZIRE';
+        if (entity.state === 'Deficienta ACC') return '⚠️ DEFICIENTĂ 🚿 APA CALDA';
+        if (entity.state === 'Deficienta ACC/INC') return '⚠️ DEFICIENTĂ<br> 🚿 APA CALDĂ si 🔥 ÎNCĂLZIRE';
+        return '✅ SISTEM FUNCȚIONAL';
       ]]]
     icon: |
       [[[
-        if (entity.state === 'ÎNCĂLZIRE') return 'mdi:radiator-disabled';
-        if (entity.state === 'APĂ CALDĂ') return 'mdi:water-off';
-        if (entity.state.includes('Deficienta')) return 'mdi:alert-circle-outline';
+        if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'APĂ CALDĂ' || entity.state.includes('Deficienta') || entity.state.includes('Oprire')) return 'mdi:alert-circle-outline';
         return 'mdi:check-circle-outline';
       ]]]
     state_display: |
       [[[
-        if (entity.state === 'ÎNCĂLZIRE') return '🔴 OPRIȚĂ';
-        if (entity.state === 'APĂ CALDĂ') return '🔴 OPRIȚĂ';
-        if (entity.state.includes('Deficienta')) return '🔴 DEFICIENT';
+        if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'Oprire INC') return '🚨 OPRITĂ';
+        if (entity.state === 'APĂ CALDĂ' || entity.state === 'Oprire ACC') return '🚨 OPRITĂ';
+        if (entity.state === 'Oprire ACC/INC') return '🚨 OPRITĂ';
+        if (entity.state === 'Deficienta INC') return '🚫 DEFICIENTĂ';
+        if (entity.state === 'Deficienta ACC') return '🚫 DEFICIENTĂ';
+        if (entity.state === 'Deficienta ACC/INC') return '🚫 DEFICIENTĂ';
         return '🟢 ACTIV';
       ]]]
     styles:
       card:
         - background-color: |
             [[[
-              if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'APĂ CALDĂ' || entity.state.includes('Deficienta')) return '#ff4444';
+              if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'APĂ CALDĂ' || 
+                  entity.state.includes('Deficienta') || entity.state.includes('Oprire')) return '#ff4444';
               return '#4CAF50';
             ]]]
         - color: white
         - font-weight: bold
         - border-radius: 10px
-        - padding: 20px
+        - padding: 15px
         - text-align: center
         - box-shadow: var(--box-shadow)
         - border: 2px solid white
       icon:
         - color: white
-        - width: 35px
-        - height: 35px
+        - width: 40px
+        - height: 40px
       name:
         - font-size: 20px
         - margin-bottom: 8px
+        - line-height: 1.2
       state:
-        - font-size: 14px
+        - font-size: 15px
         - font-weight: normal
-  - type: grid
+  - square: false
+    type: grid
     columns: 2
-    square: false
     cards:
       - type: custom:button-card
         entity: sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC
@@ -220,6 +226,7 @@ cards:
             - font-size: 13px
             - font-weight: normal
             - color: var(--secondary-text-color)
+
 ```
 ### 📱 Card 2: Stare Detaliată v.2
 
