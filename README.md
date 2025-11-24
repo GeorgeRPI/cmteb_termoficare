@@ -107,24 +107,23 @@ type: vertical-stack
 cards:
   - type: markdown
     content: >
-      # 🛣️ {{ state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
+      # 🛣️ {{
+      state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
       'Adresa') }}
-
-
       ## **🔥 Punct Termic:** {{
-      state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC', 'Punct_Termic')
-      | default('General') }}
+      state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
+      'Punct_Termic') | default('General') }}
     card_mod:
       style: |
         ha-card {
-          background: #4b0082;
+          background: #4b0082 ;
           color: white;
           text-align: center;
           font-weight: bold;
           padding: 15px;
-          border-radius: 10px 10px 0 0;
+          border-radius: 10px;
           box-shadow: var(--box-shadow);
-
+          border: 2px solid white
         }
         h2 {
           font-size: 1.5em;
@@ -136,7 +135,7 @@ cards:
       [[[
         if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'Oprire INC') return '🔥 ÎNCĂLZIRE (INC)';
         if (entity.state === 'APĂ CALDĂ' || entity.state === 'Oprire ACC') return '🚿 APĂ CALDĂ (ACC)';
-        if (entity.state === 'Oprire ACC/INC') return 'OPRITĂ<br> 🚿 APA CALDĂ si 🔥 ÎNCĂLZIREA'; 
+        if (entity.state === 'Oprire ACC/INC') return 'OPRITĂ<br> 🚿 APA CALDĂ si 🔥 ÎNCĂLZIRE'; 
         if (entity.state === 'Deficienta INC') return '⚠️ DEFICIENTĂ 🔥 INCALZIRE';
         if (entity.state === 'Deficienta ACC') return '⚠️ DEFICIENTĂ 🚿 APA CALDA';
         if (entity.state === 'Deficienta ACC/INC') return '⚠️ DEFICIENTĂ<br> 🚿 APA CALDĂ si 🔥 ÎNCĂLZIRE';
