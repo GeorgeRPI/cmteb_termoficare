@@ -85,9 +85,9 @@ Fiecare adresă adăugată creează 3 senzori unici:
 
 | Senzor | Descriere | Exemplu Valori |
 |--------|-----------|----------------|
-| `sensor.cmteb_agent_afectat_[nume_adresa]` | Agentul termic afectat | `"ÎNCĂLZIRE"`, `"APĂ CALDĂ"` |
-| `sensor.cmteb_cauza_interventie_[nume_adresa]` | Motivul intervenției | `"Defecțiune rețea"` |
-| `sensor.cmteb_data_estimata_reparatie_[nume_adresa]` | Data estimată reparare | `"25.11.2025 18:00"` |
+| `sensor.cmteb_agent_afectat_[nume_adresa_punct_termic]` | Agentul termic afectat | `"ÎNCĂLZIRE"`, `"APĂ CALDĂ"` |
+| `sensor.cmteb_cauza_interventie_[nume_adresa_punct_termic]` | Motivul intervenției | `"Defecțiune rețea"` |
+| `sensor.cmteb_data_estimata_reparatie_[nume_adresa_punct_termic]` | Data estimată reparare | `"25.11.2025 18:00"` |
 
 ### 🏷️ Exemple Nume Senzori
 | Adresa Introdusă | Punct termic |Entity ID Generat |
