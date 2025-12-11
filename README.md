@@ -402,6 +402,7 @@ cards:
 ```
 
 ### 📱 Card:  Stare Detaliată v.1
+![Card Stare Detaliată 3](images/card1.png)
 
 ```yaml
 type: custom:vertical-stack-in-card
