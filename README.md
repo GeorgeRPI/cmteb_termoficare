@@ -99,15 +99,15 @@ Fiecare adresă adăugată creează 3 senzori unici:
 ---
 
 ## 🎨 Carduri Lovelace
-
-![Card Stare Detaliată v.4](images/card v4.png)
+### 📱 Card:  Stare Detaliată 3
+![Card Stare Detaliată 3](images/card3.png)
 
 ```yaml
 type: vertical-stack
 cards:
   - type: markdown
     content: >
-      # 🛣️ Strada: {{
+      # 🛣️ {{
       state_attr('sensor.cmteb_agent_afectat_kepler_johannes_galvani_tei',
       'Adresa') }} 
 
@@ -271,7 +271,8 @@ cards:
 title: CMTEB Bucuresti
 
 ```
-### 📱 Card:  Stare Detaliată v.3
+### 📱 Card:  Stare Detaliată 2
+![Card Stare Detaliată 2](images/card2.png)
 
 ```yaml
 type: vertical-stack
@@ -399,191 +400,80 @@ cards:
             - color: var(--secondary-text-color)
 
 ```
-### 📱 Card:  Stare Detaliată v.2
-
-```yaml
-type: vertical-stack
-cards:
-  - type: markdown
-    content: >
-      # 🏘️ {{ state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
-      'Adresa') | default('Locație') }}
-    card_mod:
-      style: |
-        ha-card {
-          background: var(--primary-color);
-          color: white;
-          text-align: center;
-          font-weight: bold;
-          padding: 15px;
-          border-radius: 10px 10px 0 0;
-          box-shadow: var(--box-shadow);
-        }
-  - type: markdown
-    content: >
-      ## 🛣️ Stradă: {{
-      state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC', 'Adresa') }}
-
-      ## 🔥 Punct Termic: {{
-      state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
-      'Punct_Termic') | default('General') }}
-    card_mod:
-      style: |
-        ha-card {
-          background: var(--card-background-color);
-          padding: 15px;
-          border-left: 4px solid var(--primary-color);
-        }
-  - type: custom:button-card
-    entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
-    name: |
-      [[[
-        if (entity.state === 'ÎNCĂLZIRE') return '🔥 ÎNCĂLZIRE (INC)';
-        if (entity.state === 'APĂ CALDĂ') return '🚿 APĂ CALDĂ (ACC)';
-        if (entity.state.includes('Deficienta')) return '⚠️ ' + entity.state;
-        return '✅ FUNCȚIONAL';
-      ]]]
-    icon: |
-      [[[
-        if (entity.state === 'ÎNCĂLZIRE') return 'mdi:radiator-disabled';
-        if (entity.state === 'APĂ CALDĂ') return 'mdi:water-off';
-        if (entity.state.includes('Deficienta')) return 'mdi:alert-circle-outline';
-        return 'mdi:check-circle-outline';
-      ]]]
-    state_display: |
-      [[[
-        if (entity.state === 'ÎNCĂLZIRE') return '🔴 OPRIȚĂ';
-        if (entity.state === 'APĂ CALDĂ') return '🔴 OPRIȚĂ';
-        if (entity.state.includes('Deficienta')) return '🔵 DEFICIENT';
-        return '🟢 ACTIV';
-      ]]]
-    styles:
-      card:
-        - background-color: |
-            [[[
-              if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'APĂ CALDĂ') return '#ff4444';
-              if (entity.state.includes('Deficienta')) return '#2196F3';
-              return '#4CAF50';
-            ]]]
-        - color: white
-        - font-weight: bold
-        - border-radius: 10px
-        - padding: 20px
-        - text-align: center
-        - box-shadow: var(--box-shadow)
-        - border: 2px solid white
-      icon:
-        - color: white
-        - width: 35px
-        - height: 35px
-      name:
-        - font-size: 23px
-        - margin-bottom: 8px
-      state:
-        - font-size: 14px
-        - font-weight: normal
-  - type: grid
-    columns: 2
-    square: false
-    cards:
-      - type: custom:button-card
-        entity: sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC
-        name: 🛠️ Cauza
-        icon: mdi:hammer-wrench
-        show_state: true
-        styles:
-          card:
-            - background-color: var(--card-background-color)
-            - border-radius: 8px
-            - padding: 12px
-            - border-left: 4px solid
-            - box-shadow: var(--box-shadow)
-          name:
-            - font-size: 12px
-            - font-weight: bold
-            - color: var(--primary-text-color)
-          state:
-            - font-size: 13px
-            - font-weight: normal
-            - color: var(--secondary-text-color)
-      - type: custom:button-card
-        entity: sensor.cmteb_data_estimata_reparatie_STRADA_PUNCT_TERMIC
-        name: 📅 Data Reparare
-        icon: mdi:calendar-clock
-        show_state: true
-        styles:
-          card:
-            - background-color: var(--card-background-color)
-            - border-radius: 8px
-            - padding: 12px
-            - border-left: 4px solid
-            - box-shadow: var(--box-shadow)
-          name:
-            - font-size: 12px
-            - font-weight: bold
-            - color: var(--primary-text-color)
-          state:
-            - font-size: 13px
-            - font-weight: normal
-            - color: var(--secondary-text-color)
-
-```
 
 ### 📱 Card:  Stare Detaliată v.1
 
 ```yaml
 type: custom:vertical-stack-in-card
-title: 🔥 Status Termoficare CMTEB
+title: 🔥 Status Termoficare
 cards:
   - type: conditional
     conditions:
-      - entity: sensor.cmteb_agent_afectat_STRADA
-        state_not: "Fără întreruperi"
+      - condition: state
+        entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
+        state_not: Fără întreruperi
     card:
       type: markdown
-      content: |
+      content: >
         ### ⚠️ ÎNTRERUPERE ACTIVĂ
-        **Locație:** {{ states.sensor.cmteb_agent_afectat_STRADA.attributes.Adresa }}
-        **Agent afectat:** {{ states.sensor.cmteb_agent_afectat_STRADA.state }}
-        **Cauză:** {{ states.sensor.cmteb_cauza_interventie_STRADA.state }}
-        **Data estimată reparare:** {{ states.sensor.cmteb_data_estimata_reparatie_STRADA.state }}
+
+        **Locație:** {{
+        states.sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC.attributes.Adresa
+        }}
+
+        **Agent afectat:** {{
+        states.sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC.state }}
+
+        **Cauză:** {{
+        states.sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC.state
+        }}
+
+        **Data estimată reparare:** {{
+        states.sensor.cmteb_data_estimata_reparatie_STRADA_PUNCT_TERMIC.state
+        }}
       card_mod:
         style: |
           ha-card {
             background: var(--warning-color);
             color: var(--primary-text-color);
             border-left: 4px solid var(--error-color);
-            padding: 15px;
           }
   - type: conditional
     conditions:
-      - entity: sensor.cmteb_agent_afectat_STRADA
-        state: "Fără întreruperi"
+      - condition: state
+        entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
+        state: Fără întreruperi
     card:
       type: markdown
-      content: |
+      content: >
         ### ✅ NICI O ÎNTRERUPERE
-        **Locație:** {{ states.sensor.cmteb_agent_afectat_STRADA.attributes.Adresa }}
-        **Status:** Toate serviciile funcționează normal 🎉
+
+        **Locație:** {{
+        states.sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC.attributes.Adresa
+        }}
+
+        **Status:** Toate serviciile funcționează normal
       card_mod:
         style: |
           ha-card {
             background: var(--success-color);
             color: white;
-            padding: 15px;
           }
   - type: entities
     entities:
-      - entity: sensor.cmteb_agent_afectat_STRADA
+      - entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
         name: Agent Termic Afectat
         icon: mdi:fire-circle
-      - entity: sensor.cmteb_cauza_interventie_STRADA
+      - entity: sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC
         name: Motivul Intervenției
         icon: mdi:tooltip-text
-      - entity: sensor.cmteb_data_estimata_reparatie_STRADA
+      - entity: sensor.cmteb_data_estimata_reparatie_STRADA_PUNCT_TERMIC
         name: Data Estimată Reparare
         icon: mdi:calendar-check
     title: Detalii Tehnice
+    show_header_toggle: false
+    state_color: false
+    theme: synthwave
 
 ````
 ---
