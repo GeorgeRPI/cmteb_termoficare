@@ -108,12 +108,12 @@ cards:
   - type: markdown
     content: >
       # 🛣️ {{
-      state_attr('sensor.cmteb_agent_afectat_kepler_johannes_galvani_tei',
+      state_attr('sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC',
       'Adresa') }} 
 
 
       ## **🔥 Punct Termic:** {{
-      state_attr('sensor.cmteb_agent_afectat_kepler_johannes_galvani_tei',
+      state_attr('sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC',
       'Punct_Termic') | default('General') }}
     card_mod:
       style: |
@@ -132,7 +132,7 @@ cards:
           margin-bottom: 10px;
         }
   - type: custom:button-card
-    entity: sensor.cmteb_agent_afectat_kepler_johannes_galvani_tei
+    entity: sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC
     name: |
       [[[
         if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'Oprire INC') return '🔥 ÎNCĂLZIRE (INC)';
@@ -190,7 +190,7 @@ cards:
         - font-size: 15px
         - font-weight: normal
   - type: custom:button-card
-    entity: sensor.cmteb_cauza_interventie_kepler_johannes_galvani_tei
+    entity: sensor.cmteb_cauza_interventie_STRADA_PUNC_TERMIC
     name: 🛠️ Cauza / Descrierea intervenției
     icon: mdi:hammer-wrench
     show_state: true
@@ -198,7 +198,7 @@ cards:
       card:
         - background-color: |
             [[[
-              const mainState = states['sensor.cmteb_agent_afectat_kepler_johannes_galvani_tei'].state;
+              const mainState = states['sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC'].state;
               if (mainState === 'ÎNCĂLZIRE' || mainState === 'APĂ CALDĂ' || 
                   mainState.includes('Deficienta') || mainState.includes('Oprire')) {
                 return '#ff4444';
@@ -230,7 +230,7 @@ cards:
         - font-size: 16px
         - font-weight: bold
   - type: custom:button-card
-    entity: sensor.cmteb_data_estimata_reparatie_kepler_johannes_galvani_tei
+    entity: sensor.cmteb_data_estimata_reparatie_STRADA_PUNC_TERMIC
     name: 📅 Data/ora estimării punerii în funcțiune
     icon: mdi:calendar-clock
     show_state: true
@@ -238,7 +238,7 @@ cards:
       card:
         - background-color: |
             [[[
-              const mainState = states['sensor.cmteb_agent_afectat_kepler_johannes_galvani_tei'].state;
+              const mainState = states['sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC'].state;
               if (mainState === 'ÎNCĂLZIRE' || mainState === 'APĂ CALDĂ' || 
                   mainState.includes('Deficienta') || mainState.includes('Oprire')) {
                 return '#ff4444';
@@ -410,7 +410,7 @@ cards:
   - type: conditional
     conditions:
       - condition: state
-        entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
+        entity: sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC
         state_not: Fără întreruperi
     card:
       type: markdown
@@ -418,18 +418,18 @@ cards:
         ### ⚠️ ÎNTRERUPERE ACTIVĂ
 
         **Locație:** {{
-        states.sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC.attributes.Adresa
+        states.sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC.attributes.Adresa
         }}
 
         **Agent afectat:** {{
-        states.sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC.state }}
+        states.sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC.state }}
 
         **Cauză:** {{
-        states.sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC.state
+        states.sensor.cmteb_cauza_interventie_STRADA_PUNC_TERMIC.state
         }}
 
         **Data estimată reparare:** {{
-        states.sensor.cmteb_data_estimata_reparatie_STRADA_PUNCT_TERMIC.state
+        states.sensor.cmteb_data_estimata_reparatie_STRADA_PUNC_TERMIC.state
         }}
       card_mod:
         style: |
@@ -441,7 +441,7 @@ cards:
   - type: conditional
     conditions:
       - condition: state
-        entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
+        entity: sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC
         state: Fără întreruperi
     card:
       type: markdown
@@ -449,7 +449,7 @@ cards:
         ### ✅ NICI O ÎNTRERUPERE
 
         **Locație:** {{
-        states.sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC.attributes.Adresa
+        states.sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC.attributes.Adresa
         }}
 
         **Status:** Toate serviciile funcționează normal
@@ -461,13 +461,13 @@ cards:
           }
   - type: entities
     entities:
-      - entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
+      - entity: sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC
         name: Agent Termic Afectat
         icon: mdi:fire-circle
-      - entity: sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC
+      - entity: sensor.cmteb_cauza_interventie_STRADA_PUNC_TERMIC
         name: Motivul Intervenției
         icon: mdi:tooltip-text
-      - entity: sensor.cmteb_data_estimata_reparatie_STRADA_PUNCT_TERMIC
+      - entity: sensor.cmteb_data_estimata_reparatie_STRADA_PUNC_TERMIC
         name: Data Estimată Reparare
         icon: mdi:calendar-check
     title: Detalii Tehnice
