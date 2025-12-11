@@ -105,15 +105,41 @@ Fiecare adresă adăugată creează 3 senzori unici:
 ```yaml
 type: vertical-stack
 cards:
+  - type: custom:button-card
+    name: "🔥Status: CMTEB București"
+    tap_action:
+      action: none
+    hold_action:
+      action: none
+    styles:
+      card:
+        - background: linear-gradient(135deg,
+        - color: white
+        - font-weight: bold
+        - border-radius: 10px
+        - padding: 20px
+        - text-align: center
+        - box-shadow: var(--box-shadow)
+        - border: 2px solid gold
+        - margin-bottom: 10px
+      icon:
+        - color: gold
+        - width: 35px
+        - height: 35px
+        - margin-right: 10px
+      name:
+        - font-size: 22px
+        - text-transform: uppercase
+        - letter-spacing: 1px
   - type: markdown
     content: >
-      # 🛣️ {{
-      state_attr('sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC',
-      'Adresa') }} 
+      # 🛣️ Strada: {{
+      state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
+      'Adresa') }}  
 
 
-      ## **🔥 Punct Termic:** {{
-      state_attr('sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC',
+      ## 🔥 Punct Termic: {{
+      state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
       'Punct_Termic') | default('General') }}
     card_mod:
       style: |
@@ -123,16 +149,17 @@ cards:
           text-align: center;
           font-weight: bold;
           padding: 15px;
-          border-radius: 10px ;
+          border-radius: 10px;
           box-shadow: var(--box-shadow);
-          border: 2px solid white
+          border: 2px solid white;
+          margin-bottom: 10px;
         }
         h2 {
           font-size: 1.5em;
           margin-bottom: 10px;
         }
   - type: custom:button-card
-    entity: sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC
+    entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
     name: |
       [[[
         if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'Oprire INC') return '🔥 ÎNCĂLZIRE (INC)';
@@ -178,6 +205,7 @@ cards:
         - flex-direction: column
         - justify-content: center
         - align-items: center
+        - margin-bottom: 10px
       icon:
         - color: white
         - width: 40px
@@ -190,7 +218,7 @@ cards:
         - font-size: 15px
         - font-weight: normal
   - type: custom:button-card
-    entity: sensor.cmteb_cauza_interventie_STRADA_PUNC_TERMIC
+    entity: sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC
     name: 🛠️ Cauza / Descrierea intervenției
     icon: mdi:hammer-wrench
     show_state: true
@@ -198,7 +226,7 @@ cards:
       card:
         - background-color: |
             [[[
-              const mainState = states['sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC'].state;
+              const mainState = states['sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC'].state;
               if (mainState === 'ÎNCĂLZIRE' || mainState === 'APĂ CALDĂ' || 
                   mainState.includes('Deficienta') || mainState.includes('Oprire')) {
                 return '#ff4444';
@@ -216,7 +244,7 @@ cards:
         - flex-direction: column
         - justify-content: center
         - align-items: center
-        - margin-bottom: 8px
+        - margin-bottom: 10px
       icon:
         - color: white
         - width: 40px
@@ -230,7 +258,7 @@ cards:
         - font-size: 16px
         - font-weight: bold
   - type: custom:button-card
-    entity: sensor.cmteb_data_estimata_reparatie_STRADA_PUNC_TERMIC
+    entity: sensor.cmteb_data_estimata_reparatie_STRADA_PUNCT_TERMIC
     name: 📅 Data/ora estimării punerii în funcțiune
     icon: mdi:calendar-clock
     show_state: true
@@ -238,7 +266,7 @@ cards:
       card:
         - background-color: |
             [[[
-              const mainState = states['sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC'].state;
+              const mainState = states['sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC'].state;
               if (mainState === 'ÎNCĂLZIRE' || mainState === 'APĂ CALDĂ' || 
                   mainState.includes('Deficienta') || mainState.includes('Oprire')) {
                 return '#ff4444';
@@ -268,7 +296,7 @@ cards:
       state:
         - font-size: 16px
         - font-weight: bold
-title: CMTEB Bucuresti
+
 
 ```
 ### 📱 Card:  Stare Detaliată 2
