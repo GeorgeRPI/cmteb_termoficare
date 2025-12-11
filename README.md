@@ -100,7 +100,7 @@ Fiecare adresă adăugată creează 3 senzori unici:
 
 ## 🎨 Carduri Lovelace
 
-### 📱 Card:  Stare Detaliată v.4
+![Card Stare Detaliată v.4](images/card v4.png)
 
 ```yaml
 type: vertical-stack
