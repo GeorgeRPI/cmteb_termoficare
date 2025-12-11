@@ -66,14 +66,14 @@ Integrarea recunoaște automat toate variantele de scriere pentru străzi:
 
 ### Pasul 2: Completează Datele
 - **📝 Adresa:** Introdu adresa în orice variantă
-- **🏭 Punct Termic (opțional):** Numele punctului termic specific
+- **🏭 Punct Termic:** Numele punctului termic specific (se gaseste pe harta)
 
-### 📋 Exemple Adrese Valide
-- `"str Grigore C. Moisil"`
-- `"bd. Unirii 15"`
-- `"Sos Pantelimon"`
-- `"drm Taberei"`
-- `"p-ta Romană"`
+### 📋 Exemple Adrese Valide si Punct termic
+- `"Str Zambilelor" - Punct termic: "Opanez"`
+- `"bd. Unirii 15" - Punct termic: "Tribunal"`
+- `"Sos Pantelimon" - Punct termic: "19 Pantelimon"`
+- `"Drm Timonierului" - Punct termic: "13 Liniei"`
+- `"Bld Mareşal Alexandru Averescu" - Punct termic: "Miciurin"`
 - `"se poate introduce si doar numele strazi"`
 
 ---
@@ -100,7 +100,178 @@ Fiecare adresă adăugată creează 3 senzori unici:
 
 ## 🎨 Carduri Lovelace
 
-### 📱 Card 1: Stare Detaliată v.3
+### 📱 Card:  Stare Detaliată v.4
+
+```yaml
+type: vertical-stack
+cards:
+  - type: markdown
+    content: >
+      # 🛣️ Strada: {{
+      state_attr('sensor.cmteb_agent_afectat_kepler_johannes_galvani_tei',
+      'Adresa') }} 
+
+
+      ## **🔥 Punct Termic:** {{
+      state_attr('sensor.cmteb_agent_afectat_kepler_johannes_galvani_tei',
+      'Punct_Termic') | default('General') }}
+    card_mod:
+      style: |
+        ha-card {
+          background: #4b0082;
+          color: white;
+          text-align: center;
+          font-weight: bold;
+          padding: 15px;
+          border-radius: 10px ;
+          box-shadow: var(--box-shadow);
+          border: 2px solid white
+        }
+        h2 {
+          font-size: 1.5em;
+          margin-bottom: 10px;
+        }
+  - type: custom:button-card
+    entity: sensor.cmteb_agent_afectat_kepler_johannes_galvani_tei
+    name: |
+      [[[
+        if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'Oprire INC') return '🔥 ÎNCĂLZIRE (INC)';
+        if (entity.state === 'APĂ CALDĂ' || entity.state === 'Oprire ACC') return '🚿 APĂ CALDĂ (ACC)';
+        if (entity.state === 'Oprire ACC/INC') return 'OPRITĂ<br> 🚿 APA CALDĂ si 🔥 ÎNCĂLZIREA'; 
+        if (entity.state === 'Deficienta INC') return '⚠️ DEFICIENTĂ 🔥 INCALZIRE';
+        if (entity.state === 'Deficienta ACC') return '⚠️ DEFICIENTĂ 🚿 APA CALDA';
+        if (entity.state === 'Deficienta ACC/INC') return '⚠️ DEFICIENTĂ<br> 🚿 APĂ CALDĂ si 🔥 ÎNCĂLZIRE';
+        return '🌡️ SISTEM FUNCȚIONAL';
+      ]]]
+    icon: |
+      [[[
+        if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'APĂ CALDĂ' || entity.state.includes('Deficienta') || entity.state.includes('Oprire')) return 'mdi:alert-circle-outline';
+        return 'mdi:check-circle-outline';
+      ]]]
+    state_display: |
+      [[[
+        if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'Oprire INC') return '🚨 OPRITĂ';
+        if (entity.state === 'APĂ CALDĂ' || entity.state === 'Oprire ACC') return '🚨 OPRITĂ';
+        if (entity.state === 'Oprire ACC/INC') return '🚨 OPRITĂ';
+        if (entity.state === 'Deficienta INC') return '🚫 DEFICIENTĂ';
+        if (entity.state === 'Deficienta ACC') return '🚫 DEFICIENTĂ';
+        if (entity.state === 'Deficienta ACC/INC') return '🚫 DEFICIENTĂ';
+        return '🟢 ACTIV';
+      ]]]
+    styles:
+      card:
+        - background-color: |
+            [[[
+              if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'APĂ CALDĂ' || 
+                  entity.state.includes('Deficienta') || entity.state.includes('Oprire')) return '#ff4444';
+              return '#4CAF50';
+            ]]]
+        - color: white
+        - font-weight: bold
+        - border-radius: 10px
+        - padding: 15px
+        - text-align: center
+        - box-shadow: var(--box-shadow)
+        - border: 2px solid white
+        - height: 100px
+        - display: flex
+        - flex-direction: column
+        - justify-content: center
+        - align-items: center
+      icon:
+        - color: white
+        - width: 40px
+        - height: 40px
+      name:
+        - font-size: 20px
+        - margin-bottom: 8px
+        - line-height: 1.2
+      state:
+        - font-size: 15px
+        - font-weight: normal
+  - type: custom:button-card
+    entity: sensor.cmteb_cauza_interventie_kepler_johannes_galvani_tei
+    name: 🛠️ Cauza / Descrierea intervenției
+    icon: mdi:hammer-wrench
+    show_state: true
+    styles:
+      card:
+        - background-color: |
+            [[[
+              const mainState = states['sensor.cmteb_agent_afectat_kepler_johannes_galvani_tei'].state;
+              if (mainState === 'ÎNCĂLZIRE' || mainState === 'APĂ CALDĂ' || 
+                  mainState.includes('Deficienta') || mainState.includes('Oprire')) {
+                return '#ff4444';
+              }
+              return '#000000';
+            ]]]
+        - color: white
+        - border-radius: 10px
+        - padding: 15px
+        - text-align: center
+        - box-shadow: var(--box-shadow)
+        - border: 2px solid white
+        - height: 100px
+        - display: flex
+        - flex-direction: column
+        - justify-content: center
+        - align-items: center
+        - margin-bottom: 8px
+      icon:
+        - color: white
+        - width: 40px
+        - height: 40px
+        - margin-bottom: 8px
+      name:
+        - font-size: 14px
+        - font-weight: bold
+        - margin-bottom: 5px
+      state:
+        - font-size: 16px
+        - font-weight: bold
+  - type: custom:button-card
+    entity: sensor.cmteb_data_estimata_reparatie_kepler_johannes_galvani_tei
+    name: 📅 Data/ora estimării punerii în funcțiune
+    icon: mdi:calendar-clock
+    show_state: true
+    styles:
+      card:
+        - background-color: |
+            [[[
+              const mainState = states['sensor.cmteb_agent_afectat_kepler_johannes_galvani_tei'].state;
+              if (mainState === 'ÎNCĂLZIRE' || mainState === 'APĂ CALDĂ' || 
+                  mainState.includes('Deficienta') || mainState.includes('Oprire')) {
+                return '#ff4444';
+              }
+              return '#000000';
+            ]]]
+        - color: white
+        - border-radius: 10px
+        - padding: 15px
+        - text-align: center
+        - box-shadow: var(--box-shadow)
+        - border: 2px solid white
+        - height: 100px
+        - display: flex
+        - flex-direction: column
+        - justify-content: center
+        - align-items: center
+      icon:
+        - color: white
+        - width: 40px
+        - height: 40px
+        - margin-bottom: 8px
+      name:
+        - font-size: 14px
+        - font-weight: bold
+        - margin-bottom: 5px
+      state:
+        - font-size: 16px
+        - font-weight: bold
+title: CMTEB Bucuresti
+
+```
+### 📱 Card:  Stare Detaliată v.3
 
 ```yaml
 type: vertical-stack
@@ -228,7 +399,7 @@ cards:
             - color: var(--secondary-text-color)
 
 ```
-### 📱 Card 2: Stare Detaliată v.2
+### 📱 Card:  Stare Detaliată v.2
 
 ```yaml
 type: vertical-stack
@@ -358,7 +529,7 @@ cards:
 
 ```
 
-### 📱 Card 3: Stare Detaliată v.1
+### 📱 Card:  Stare Detaliată v.1
 
 ```yaml
 type: custom:vertical-stack-in-card
