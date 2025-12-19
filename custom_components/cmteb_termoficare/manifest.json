@@ -2,8 +2,7 @@
   "domain": "cmteb_termoficare",
   "name": "CMTEB Termoficare",
   "codeowners": ["@GeorgeRPI"],
-  "icon": "/local/custom_components/nume_integare/images/logo2.png"
-,
+  "icon": "/local/custom_components/nume_integare/images/logo2.png",
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/GeorgeRPI/cmteb_termoficare",
