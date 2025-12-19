@@ -1,6 +1,7 @@
 {
   "domain": "cmteb_termoficare",
   "name": "CMTEB Termoficare",
+  "icon": "icon"
   "codeowners": ["@GeorgeRPI"],
   "config_flow": true,
   "dependencies": [],
