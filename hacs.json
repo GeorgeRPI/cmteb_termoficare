@@ -1,6 +1,6 @@
 {
   "name": "CMTEB Termoficare",
-  "icon": "images/logo2.png",
+  "icon": "https://raw.githubusercontent.com/GeorgeRPI/cmteb_termoficare/main/images/logo2.png",
   "render_readme": true,
   "homeassistant": "2023.1.0",
   "country": ["RO"]
