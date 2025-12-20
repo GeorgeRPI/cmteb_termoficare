@@ -21,7 +21,7 @@ Integrare pentru monitorizarea în timp real a întreruperilor in furnizarea age
 - ✅ **Carduri Lovelace personalizate** incluse
 
 ### 🔍 Sistem Inteligent de Căutare
-Integrarea recunoaște automat toate variantele de scriere pentru străzi:
+Integrarea recunoaște automat toate (aproape toate) variantele de scriere pentru străzi:
 
 | Tu introduci: | Site-ul CMTEB afișează: | Rezultat: |
 |---------------|-------------------------|-----------|
