@@ -4,7 +4,7 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 [![Home Assistant](https://img.shields.io/badge/Home_Assistant-2023.1%2B-green.svg)](https://www.home-assistant.io/)
 
-Integrare pentru monitorizarea in timp real a intreruperilor in furnizarea agentului termic a Companiei Municipale TERMOENERGETICA București.
+Integrare pentru monitorizarea in timp real a intreruperilor in furnizarea agentului termic a Companiei Municipale TERMOENERGETICA Bucuresti.
 
 
 ---
