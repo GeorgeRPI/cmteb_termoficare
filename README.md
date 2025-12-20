@@ -4,26 +4,26 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 [![Home Assistant](https://img.shields.io/badge/Home_Assistant-2023.1%2B-green.svg)](https://www.home-assistant.io/)
 
-Integrare pentru monitorizarea în timp real a întreruperilor in furnizarea agentului termic a Companiei Municipale TERMOENERGETICA București.
+Integrare pentru monitorizarea in timp real a intreruperilor in furnizarea agentului termic a Companiei Municipale TERMOENERGETICA București.
 
 
 ---
 
 ## 🚀 Caracteristici
 
-### ✨ Funcționalități Principale
-- ✅ **Monitorizare în timp real** a întreruperilor la termoficare
-- ✅ **Sistem inteligent de căutare** cu recunoaștere prescurtări
-- ✅ **Configurare grafică** - fără editare manuală YAML
+### ✨ Functionalitati Principale
+- ✅ **Monitorizare in timp real** a intreruperilor la termoficare
+- ✅ **Sistem inteligent de cautare** cu recunoastere prescurtari
+- ✅ **Configurare grafica** - fara editare manuală YAML
 - ✅ **Senzori cu nume semnificative** bazate pe adresă
-- ✅ **Actualizare automată** la fiecare 30 de minute
+- ✅ **Actualizare automata** la fiecare 30 de minute
 - ✅ **Support pentru multiple adrese** simultan
 - ✅ **Carduri Lovelace personalizate** incluse
 
 ### 🔍 Sistem Inteligent de Căutare
-Integrarea recunoaște automat toate (aproape toate) variantele de scriere pentru străzi:
+Integrarea recunoaște automat toate (aproape toate) variantele de scriere pentru strazi:
 
-| Tu introduci: | Site-ul CMTEB afișează: | Rezultat: |
+| Tu introduci: | Site-ul CMTEB afiseaza: | Rezultat: |
 |---------------|-------------------------|-----------|
 | `str Moisil` | `Strada Grigore C. Moisil` | ✅ **Potrivire** |
 | `bd. Unirii` | `Bulevardul Unirii` | ✅ **Potrivire** |
@@ -38,29 +38,29 @@ Integrarea recunoaște automat toate (aproape toate) variantele de scriere pentr
 ### Metoda 1: Prin HACS (Recomandat)
 1. Deschide **HACS** în Home Assistant
 2. Click pe **Integrations**
-3. Click pe butonul cu 3 puncte (⋮) din colțul dreapta sus
-4. Selectează **Custom repositories**
-5. Adaugă URL-ul: `https://github.com/GeorgeRPI/cmteb_termoficare`
+3. Click pe butonul cu 3 puncte (⋮) din coltul dreapta sus
+4. Selecteaza **Custom repositories**
+5. Adauga URL-ul: `https://github.com/GeorgeRPI/cmteb_termoficare`
 6. Selectează categoria **Integration**
 7. Click **Add**
-8. Caută **"CMTEB Termoficare"** în lista de integrări noi
+8. Cauta **"CMTEB Termoficare"** în lista de integrari noi
 9. Click **Download**
-10. **Repornește Home Assistant**
+10. **Reporneste Home Assistant**
 
-### Metoda 2: Instalare Manuală
-1. Descarcă ultima versiune de pe [GitHub Releases](https://github.com/GeorgeRPI/cmteb_termoficare/releases)
-2. Copiază directorul `cmteb_termoficare` în `config/custom_components/`
-3. Repornește Home Assistant
-4. Adaugă integrarea din **Settings → Devices & Services → Add Integration**
+### Metoda 2: Instalare Manuala
+1. Descarca ultima versiune de pe [GitHub Releases](https://github.com/GeorgeRPI/cmteb_termoficare/releases)
+2. Copiaza directorul `cmteb_termoficare` in `config/custom_components/`
+3. Reporneste Home Assistant
+4. Adauga integrarea din **Settings → Devices & Services → Add Integration**
 
 ---
 
 ## ⚙️ Configurare
 
-### Pasul 1: Adaugă Integrarea
+### Pasul 1: Adauga Integrarea
 1. Mergi la **Settings** → **Devices & Services** → **Integrations**
 2. Click pe **Add Integration**
-3. Caută **"CMTEB Termoficare"**
+3. Cauta **"CMTEB Termoficare"**
 4. Click pe integrare pentru a o configura
 
 ### Pasul 2: Completează Datele
@@ -73,23 +73,23 @@ Integrarea recunoaște automat toate (aproape toate) variantele de scriere pentr
 - `"Sos Pantelimon" - Punct termic: "19 Pantelimon"`
 - `"Drm Timonierului" - Punct termic: "13 Liniei"`
 - `"Bld Mareşal Alexandru Averescu" - Punct termic: "Miciurin"`
-- `"se poate introduce si doar numele strazi"`
+- `"se poate introduce doar numele strazi dar nu va fi precis"`
 
 ---
 
-## 🔧 Senzori Generați
+## 🔧 Senzori Generati
 
 ### Structura Senzori
-Fiecare adresă adăugată creează 3 senzori unici:
+Fiecare adresa adaugata creeaza 3 senzori unici:
 
 | Senzor | Descriere | Exemplu Valori |
 |--------|-----------|----------------|
-| `sensor.cmteb_agent_afectat_[nume_adresa_punct_termic]` | Agentul termic afectat | `"ÎNCĂLZIRE"`, `"APĂ CALDĂ"` |
-| `sensor.cmteb_cauza_interventie_[nume_adresa_punct_termic]` | Motivul intervenției | `"Defecțiune rețea"` |
-| `sensor.cmteb_data_estimata_reparatie_[nume_adresa_punct_termic]` | Data estimată reparare | `"25.11.2025 18:00"` |
+| `sensor.cmteb_agent_afectat_[nume_adresa_punct_termic]` | Agentul termic afectat | `"INCALZIRE"`, `"APA CALDA"` |
+| `sensor.cmteb_cauza_interventie_[nume_adresa_punct_termic]` | Descrirea interventiei | `"Defectiune retea"` |
+| `sensor.cmteb_data_estimata_reparatie_[nume_adresa_punct_termic]` | Data si ora estimata reparatiei | `"25.11.2025 18:00"` |
 
 ### 🏷️ Exemple Nume Senzori
-| Adresa Introdusă | Punct termic |Entity ID Generat |
+| Adresa Introdusa | Punct termic |Entity ID Generat |
 |------------------|-------------------|-------------------|
 | `Str Grigore C. Moisil` | `Moisil 1` | `sensor.cmteb_agent_afectat_str_grigore_c_moisil_moisil_1` |
 | `Bd. Unirii 15` | `Unirii tronson 2` | `sensor.cmteb_agent_afectat_bd_unirii_15_unirii_tronson_2` |
@@ -98,14 +98,14 @@ Fiecare adresă adăugată creează 3 senzori unici:
 ---
 
 ## 🎨 Carduri Lovelace
-### 📱 Card:  Stare Detaliată 3
-![Card Stare Detaliată 3](images/card3.png)
+### 📱 Card:  Stare Detaliata 3
+![Card Stare Detaliata 3](images/card3.png)
 
 ```yaml
 type: vertical-stack
 cards:
   - type: custom:button-card
-    name: "🔥Status: CMTEB București"
+    name: "🔥Status: CMTEB Bucuresti"
     tap_action:
       action: none
     hold_action:
@@ -161,34 +161,34 @@ cards:
     entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
     name: |
       [[[
-        if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'Oprire INC') return '🔥 ÎNCĂLZIRE (INC)';
-        if (entity.state === 'APĂ CALDĂ' || entity.state === 'Oprire ACC') return '🚿 APĂ CALDĂ (ACC)';
-        if (entity.state === 'Oprire ACC/INC') return 'OPRITĂ<br> 🚿 APA CALDĂ si 🔥 ÎNCĂLZIREA'; 
-        if (entity.state === 'Deficienta INC') return '⚠️ DEFICIENTĂ 🔥 INCALZIRE';
-        if (entity.state === 'Deficienta ACC') return '⚠️ DEFICIENTĂ 🚿 APA CALDA';
-        if (entity.state === 'Deficienta ACC/INC') return '⚠️ DEFICIENTĂ<br> 🚿 APĂ CALDĂ si 🔥 ÎNCĂLZIRE';
+        if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'Oprire INC') return '🔥 INCALZIRE (INC)';
+        if (entity.state === 'APĂ CALDĂ' || entity.state === 'Oprire ACC') return '🚿 APĂ CALDA (ACC)';
+        if (entity.state === 'Oprire ACC/INC') return 'OPRITA<br> 🚿 APA CALDA si 🔥 INCALZIREA'; 
+        if (entity.state === 'Deficienta INC') return '⚠️ DEFICIENTA 🔥 INCALZIRE';
+        if (entity.state === 'Deficienta ACC') return '⚠️ DEFICIENTA 🚿 APA CALDA';
+        if (entity.state === 'Deficienta ACC/INC') return '⚠️ DEFICIENTA<br> 🚿 APA CALDA si 🔥 INCALZIRE';
         return '🌡️ SISTEM FUNCȚIONAL';
       ]]]
     icon: |
       [[[
-        if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'APĂ CALDĂ' || entity.state.includes('Deficienta') || entity.state.includes('Oprire')) return 'mdi:alert-circle-outline';
+        if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'APA CALDA' || entity.state.includes('Deficienta') || entity.state.includes('Oprire')) return 'mdi:alert-circle-outline';
         return 'mdi:check-circle-outline';
       ]]]
     state_display: |
       [[[
-        if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'Oprire INC') return '🚨 OPRITĂ';
-        if (entity.state === 'APĂ CALDĂ' || entity.state === 'Oprire ACC') return '🚨 OPRITĂ';
-        if (entity.state === 'Oprire ACC/INC') return '🚨 OPRITĂ';
-        if (entity.state === 'Deficienta INC') return '🚫 DEFICIENTĂ';
-        if (entity.state === 'Deficienta ACC') return '🚫 DEFICIENTĂ';
-        if (entity.state === 'Deficienta ACC/INC') return '🚫 DEFICIENTĂ';
+        if (entity.state === 'INCALZIRE' || entity.state === 'Oprire INC') return '🚨 OPRITA';
+        if (entity.state === 'APA CALDA' || entity.state === 'Oprire ACC') return '🚨 OPRITA';
+        if (entity.state === 'Oprire ACC/INC') return '🚨 OPRITA';
+        if (entity.state === 'Deficienta INC') return '🚫 DEFICIENTA';
+        if (entity.state === 'Deficienta ACC') return '🚫 DEFICIENTA';
+        if (entity.state === 'Deficienta ACC/INC') return '🚫 DEFICIENTA';
         return '🟢 ACTIV';
       ]]]
     styles:
       card:
         - background-color: |
             [[[
-              if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'APĂ CALDĂ' || 
+              if (entity.state === 'INCALZIRE' || entity.state === 'APA CALDA' || 
                   entity.state.includes('Deficienta') || entity.state.includes('Oprire')) return '#ff4444';
               return '#4CAF50';
             ]]]
@@ -218,7 +218,7 @@ cards:
         - font-weight: normal
   - type: custom:button-card
     entity: sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC
-    name: 🛠️ Cauza / Descrierea intervenției
+    name: 🛠️ Cauza / Descrierea interventiei
     icon: mdi:hammer-wrench
     show_state: true
     styles:
@@ -226,7 +226,7 @@ cards:
         - background-color: |
             [[[
               const mainState = states['sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC'].state;
-              if (mainState === 'ÎNCĂLZIRE' || mainState === 'APĂ CALDĂ' || 
+              if (mainState === 'INCALZIRE' || mainState === 'APA CALDA' || 
                   mainState.includes('Deficienta') || mainState.includes('Oprire')) {
                 return '#ff4444';
               }
@@ -258,7 +258,7 @@ cards:
         - font-weight: bold
   - type: custom:button-card
     entity: sensor.cmteb_data_estimata_reparatie_STRADA_PUNCT_TERMIC
-    name: 📅 Data/ora estimării punerii în funcțiune
+    name: 📅 Data/ora estimarii punerii in functiune
     icon: mdi:calendar-clock
     show_state: true
     styles:
@@ -266,7 +266,7 @@ cards:
         - background-color: |
             [[[
               const mainState = states['sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC'].state;
-              if (mainState === 'ÎNCĂLZIRE' || mainState === 'APĂ CALDĂ' || 
+              if (mainState === 'INCALZIRE' || mainState === 'APA CALDA' || 
                   mainState.includes('Deficienta') || mainState.includes('Oprire')) {
                 return '#ff4444';
               }
@@ -298,8 +298,8 @@ cards:
 
 
 ```
-### 📱 Card:  Stare Detaliată 2
-![Card Stare Detaliată 2](images/card2.png)
+### 📱 Card:  Stare Detaliata 2
+![Card Stare Detaliata 2](images/card2.png)
 
 ```yaml
 type: vertical-stack
@@ -332,34 +332,34 @@ cards:
     entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
     name: |
       [[[
-        if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'Oprire INC') return '🔥 ÎNCĂLZIRE (INC)';
-        if (entity.state === 'APĂ CALDĂ' || entity.state === 'Oprire ACC') return '🚿 APĂ CALDĂ (ACC)';
-        if (entity.state === 'Oprire ACC/INC') return 'OPRITĂ<br> 🚿 APA CALDĂ si 🔥 ÎNCĂLZIREA'; 
+        if (entity.state === 'INCALZIRE' || entity.state === 'Oprire INC') return '🔥 INCALZIRE (INC)';
+        if (entity.state === 'APA CALDA' || entity.state === 'Oprire ACC') return '🚿 APA CALDA (ACC)';
+        if (entity.state === 'Oprire ACC/INC') return 'OPRITA<br> 🚿 APA CALDA si 🔥 INCALZIREA'; 
         if (entity.state === 'Deficienta INC') return '⚠️ DEFICIENTĂ 🔥 INCALZIRE';
         if (entity.state === 'Deficienta ACC') return '⚠️ DEFICIENTĂ 🚿 APA CALDA';
-        if (entity.state === 'Deficienta ACC/INC') return '⚠️ DEFICIENTĂ<br> 🚿 APĂ CALDĂ si 🔥 ÎNCĂLZIRE';
+        if (entity.state === 'Deficienta ACC/INC') return '⚠️ DEFICIENTA<br> 🚿 APA CALDA si 🔥 INCALZIRE';
         return '✅ SISTEM FUNCȚIONAL';
       ]]]
     icon: |
       [[[
-        if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'APĂ CALDĂ' || entity.state.includes('Deficienta') || entity.state.includes('Oprire')) return 'mdi:alert-circle-outline';
+        if (entity.state === 'INCALZIRE' || entity.state === 'APA CALDA' || entity.state.includes('Deficienta') || entity.state.includes('Oprire')) return 'mdi:alert-circle-outline';
         return 'mdi:check-circle-outline';
       ]]]
     state_display: |
       [[[
-        if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'Oprire INC') return '🚨 OPRITĂ';
-        if (entity.state === 'APĂ CALDĂ' || entity.state === 'Oprire ACC') return '🚨 OPRITĂ';
-        if (entity.state === 'Oprire ACC/INC') return '🚨 OPRITĂ';
-        if (entity.state === 'Deficienta INC') return '🚫 DEFICIENTĂ';
-        if (entity.state === 'Deficienta ACC') return '🚫 DEFICIENTĂ';
-        if (entity.state === 'Deficienta ACC/INC') return '🚫 DEFICIENTĂ';
+        if (entity.state === 'INCALZIRE' || entity.state === 'Oprire INC') return '🚨 OPRITA';
+        if (entity.state === 'APA CALDA' || entity.state === 'Oprire ACC') return '🚨 OPRITA';
+        if (entity.state === 'Oprire ACC/INC') return '🚨 OPRITA';
+        if (entity.state === 'Deficienta INC') return '🚫 DEFICIENTA';
+        if (entity.state === 'Deficienta ACC') return '🚫 DEFICIENTA';
+        if (entity.state === 'Deficienta ACC/INC') return '🚫 DEFICIENTA';
         return '🟢 ACTIV';
       ]]]
     styles:
       card:
         - background-color: |
             [[[
-              if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'APĂ CALDĂ' || 
+              if (entity.state === 'INCALZIRE' || entity.state === 'APA CALDA' || 
                   entity.state.includes('Deficienta') || entity.state.includes('Oprire')) return '#ff4444';
               return '#4CAF50';
             ]]]
@@ -387,7 +387,7 @@ cards:
     cards:
       - type: custom:button-card
         entity: sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC
-        name: 🛠️ Motiv Intervenție
+        name: 🛠️ Motiv Interventie
         icon: mdi:hammer-wrench
         show_state: true
         styles:
@@ -428,8 +428,8 @@ cards:
 
 ```
 
-### 📱 Card:  Stare Detaliată v.1
-![Card Stare Detaliată 3](images/card1.png)
+### 📱 Card:  Stare Detaliata 1
+![Card Stare Detaliata 3](images/card1.png)
 
 ```yaml
 type: custom:vertical-stack-in-card
@@ -439,24 +439,24 @@ cards:
     conditions:
       - condition: state
         entity: sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC
-        state_not: Fără întreruperi
+        state_not: Făra Intreruperi
     card:
       type: markdown
       content: >
-        ### ⚠️ ÎNTRERUPERE ACTIVĂ
+        ### ⚠️ INTRERUPERE ACTIVA
 
-        **Locație:** {{
+        **Locatie:** {{
         states.sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC.attributes.Adresa
         }}
 
         **Agent afectat:** {{
         states.sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC.state }}
 
-        **Cauză:** {{
+        **Cauza:** {{
         states.sensor.cmteb_cauza_interventie_STRADA_PUNC_TERMIC.state
         }}
 
-        **Data estimată reparare:** {{
+        **Data estimata reparare:** {{
         states.sensor.cmteb_data_estimata_reparatie_STRADA_PUNC_TERMIC.state
         }}
       card_mod:
@@ -470,17 +470,17 @@ cards:
     conditions:
       - condition: state
         entity: sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC
-        state: Fără întreruperi
+        state: Fara intreruperi
     card:
       type: markdown
       content: >
-        ### ✅ NICI O ÎNTRERUPERE
+        ### ✅ NICI O INTRERUPERE
 
-        **Locație:** {{
+        **Locatie:** {{
         states.sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC.attributes.Adresa
         }}
 
-        **Status:** Toate serviciile funcționează normal
+        **Status:** Toate serviciile functionează normal
       card_mod:
         style: |
           ha-card {
@@ -493,10 +493,10 @@ cards:
         name: Agent Termic Afectat
         icon: mdi:fire-circle
       - entity: sensor.cmteb_cauza_interventie_STRADA_PUNC_TERMIC
-        name: Motivul Intervenției
+        name: Motivul Interventiei
         icon: mdi:tooltip-text
       - entity: sensor.cmteb_data_estimata_reparatie_STRADA_PUNC_TERMIC
-        name: Data Estimată Reparare
+        name: Data Estimata Reparare
         icon: mdi:calendar-check
     title: Detalii Tehnice
     show_header_toggle: false
@@ -505,27 +505,27 @@ cards:
 
 ````
 ---
-## 🔔 Automatizări
+## 🔔 Automatizari
 
-### 📢 Alertă Notificare Întrerupere
+### 📢 Alerta Notificare Intrerupere
 
 ```yaml
-alias: "Alertă Întrerupere Termoficare"
+alias: "Alerta Intrerupere Termoficare"
 trigger:
   - platform: state
     entity_id: sensor.cmteb_agent_afectat_STRADA
-    to: "ÎNCĂLZIRE"
+    to: "INCALZIRE"
   - platform: state
     entity_id: sensor.cmteb_agent_afectat_STRADA
-    to: "APĂ CALDĂ"
+    to: "APA CALDA"
 action:
   - service: notify.mobile_app_telefonul_tau
     data:
-      title: "⚠️ Întrerupere Termoficare Detectată"
+      title: "⚠️ Intrerupere Termoficare Detectata"
       message: |
-        S-a declanșat o întrerupere la termoficare!
+        S-a declansat o intrerupere la termoficare!
         
-        📍 Locație: {{ states.sensor.cmteb_agent_afectat_STRADA.attributes.Adresa }}
+        📍 Locatie: {{ states.sensor.cmteb_agent_afectat_STRADA.attributes.Adresa }}
         🔥 Agent afectat: {{ states.sensor.cmteb_agent_afectat_STRADA.state }}
         🛠️ Cauză: {{ states.sensor.cmteb_cauza_interventie_STRADA.state }}
 
@@ -533,7 +533,7 @@ action:
 ---
 ## 🛠️ Depanare
 🔍 Logging pentru Debug
-Adaugă în configuration.yaml:
+Adauga in configuration.yaml:
 ```yaml
 logger:
   default: info
@@ -542,19 +542,19 @@ logger:
 ```
 ---
 ## ❌ Erori Comune
-| Eroare | Cauză | Soluție |
+| Eroare | Cauza | Solutie |
 |--------|-----------|----------------|
-| `"Connection refused"` | Site-ul CMTEB indisponibil | Așteaptă și reîncearcă |
-| `"Nu s-au găsit tabele"` | Structura paginii schimbată | Raportează issue |
+| `"Connection refused"` | Site-ul CMTEB indisponibil | Asteapta si reincearca |
+| `"Nu s-au găsit tabele"` | Structura paginii schimbata | Raportează issue |
 
 ---
 ## 📞 Suport
-Dacă ai întrebări sau probleme:
- 1. Verifică documentația de mai sus
- 2. Caută issues existente pe GitHub
- 3. Deschide un nou issue dacă problema nu a fost raportată
+Dacă ai intrebari sau probleme:
+ 1. Verifica documentatia de mai sus
+ 2. Cauta issues existente pe GitHub
+ 3. Deschide un nou issue daca problema nu a fost raportata
 
 🔗 Repository: https://github.com/georgeRPI/cmteb_termoficare
 
 ---
-## ✨ Făcut cu pasiune pentru comunitatea Home Assistant România ✨
+## ✨ Facut cu pasiune pentru comunitatea Home Assistant Romania ✨
