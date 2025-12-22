@@ -1,12 +1,12 @@
 """Sensor platform for CMTEB Termoficare."""
 import logging
-from datetime import timedelta, datetime
+from datetime import timedelta
 import requests
 from bs4 import BeautifulSoup
 import time
 import re
-from typing import List, Tuple, Dict, Any
-import calendar
+from typing import List, Tuple
+
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -30,129 +30,6 @@ ADRESA_VARIATIONS = {
     'platforma': ['platforma', 'Platforma', 'PLATFORMA']
 }
 
-class MonthlyHistory:
-    """Clasă simplă pentru urmărirea istoricului lunar."""
-    
-    def __init__(self):
-        self.history = {}
-        
-    def update_state(self, month_key: str, state: str):
-        """Actualizează starea pentru luna curentă."""
-        if month_key not in self.history:
-            now = datetime.now()
-            month_name = ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie",
-                         "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"][now.month - 1]
-            
-            self.history[month_key] = {
-                "month": f"{month_name} {now.year}",
-                "month_number": now.month,
-                "year": now.year,
-                "days_in_month": calendar.monthrange(now.year, now.month)[1],
-                "daily_states": {},
-                "statistics": {
-                    "incalzire_days": 0,
-                    "apa_calda_days": 0,
-                    "functional_days": 0,
-                    "deficienta_days": 0,
-                    "acc_inc_days": 0
-                }
-            }
-        
-        current_day = datetime.now().day
-        day_key = str(current_day)
-        
-        if day_key not in self.history[month_key]["daily_states"]:
-            self.history[month_key]["daily_states"][day_key] = []
-            
-        if state not in self.history[month_key]["daily_states"][day_key]:
-            self.history[month_key]["daily_states"][day_key].append(state)
-            self._recalculate_stats(month_key)
-    
-    def _recalculate_stats(self, month_key: str):
-        """Recalculează statisticile pentru o lună."""
-        if month_key not in self.history:
-            return
-            
-        month_data = self.history[month_key]
-        stats = month_data["statistics"]
-        
-        # Reset stats
-        for key in stats:
-            stats[key] = 0
-            
-        # Calculate stats
-        for day, states in month_data["daily_states"].items():
-            if not states:
-                continue
-                
-            has_incalzire = False
-            has_apa_calda = False
-            has_deficienta = False
-            has_functional = False
-            
-            for state in states:
-                state_lower = state.lower()
-                if "încălzire" in state_lower or "incalzire" in state_lower:
-                    has_incalzire = True
-                elif "apă caldă" in state_lower or "apa calda" in state_lower or "acc" in state_lower:
-                    has_apa_calda = True
-                elif "deficienta" in state_lower or "deficiență" in state_lower:
-                    has_deficienta = True
-                elif "fără întreruperi" in state_lower or "fara intreruperi" in state_lower:
-                    has_functional = True
-            
-            if has_incalzire:
-                stats["incalzire_days"] += 1
-            if has_apa_calda:
-                stats["apa_calda_days"] += 1
-            if has_deficienta:
-                stats["deficienta_days"] += 1
-            if has_functional:
-                stats["functional_days"] += 1
-            if has_incalzire and has_apa_calda:
-                stats["acc_inc_days"] += 1
-    
-    def get_current_month_stats(self):
-        """Returnează statisticile pentru luna curentă."""
-        now = datetime.now()
-        month_key = f"{now.year}-{now.month:02d}"
-        
-        if month_key not in self.history:
-            month_name = ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie",
-                         "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"][now.month - 1]
-            
-            days_in_month = calendar.monthrange(now.year, now.month)[1]
-            
-            return {
-                "month": f"{month_name} {now.year}",
-                "days_in_month": days_in_month,
-                "current_day": now.day,
-                "incalzire_days": 0,
-                "apa_calda_days": 0,
-                "functional_days": 0,
-                "deficienta_days": 0,
-                "acc_inc_days": 0,
-                "days_recorded": 0
-            }
-        
-        month_data = self.history[month_key]
-        stats = month_data["statistics"]
-        
-        return {
-            "month": month_data["month"],
-            "days_in_month": month_data["days_in_month"],
-            "current_day": now.day,
-            "incalzire_days": stats["incalzire_days"],
-            "apa_calda_days": stats["apa_calda_days"],
-            "functional_days": stats["functional_days"],
-            "deficienta_days": stats["deficienta_days"],
-            "acc_inc_days": stats["acc_inc_days"],
-            "days_recorded": len(month_data["daily_states"])
-        }
-
-# Inițializează istoricul global
-MONTHLY_HISTORY = MonthlyHistory()
-
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: ConfigEntry,
@@ -162,19 +39,140 @@ async def async_setup_entry(
     address = config_entry.data.get("adresa")
     punct_termic = config_entry.data.get("punct_termic", "")
     
-    # Generează un nume unic pentru senzori
+    # Generează un nume unic pentru senzori bazat pe adresă și punct termic
     address_slug = _create_address_slug(address, punct_termic)
 
-    # Crează senzorii
     sensors = [
         CmtebSensor(config_entry, "agent_afectat", "Agent Termic Afectat", address_slug),
         CmtebSensor(config_entry, "cauza_interventie", "Cauză Intervenție", address_slug),
-        CmtebSensor(config_entry, "data_estimata_reparatie", "Dată Estimată Reparație", address_slug),
-        CmtebSensorIstoric(config_entry, "istoric_lunar", "Istoric Lunar", address_slug)
+        CmtebSensor(config_entry, "data_estimata_reparatie", "Dată Estimată Reparație", address_slug)
     ]
     async_add_entities(sensors, update_before_add=True)
 
-# ... (toate funcțiile helper rămân la fel: _create_address_slug, _normalize_address, etc.)
+def _create_address_slug(address, punct_termic=""):
+    """Creează un slug unic pentru adresă și punct termic."""
+    # Curăță adresa pentru a crea un nume de entitate valid
+    slug = address.lower().strip()
+    
+    # Adaugă punctul termic dacă există
+    if punct_termic:
+        slug += "_" + punct_termic.lower().strip()
+    
+    # Înlocuiește spații și caractere speciale
+    slug = re.sub(r'[^\w\s]', '', slug)  # Remove special characters
+    slug = re.sub(r'\s+', '_', slug)     # Replace spaces with underscores
+    
+    # Limitează lungimea (max 32 de caractere pentru entity_id)
+    slug = slug[:32]
+    
+    # Asigură-te că începe cu o literă
+    if not slug[0].isalpha():
+        slug = 'adresa_' + slug
+    
+    return slug
+
+def _normalize_address(address: str) -> str:
+    """Normalizează o adresă prin înlocuirea prescurtărilor."""
+    if not address:
+        return ""
+    
+    # Convert to lowercase for case-insensitive matching
+    normalized = address.lower().strip()
+    
+    # Înlocuiește variantele cu forma standard
+    for standard_form, variations in ADRESA_VARIATIONS.items():
+        for variation in variations:
+            # Caută varianta ca cuvânt întreg (cu spații în jur)
+            pattern = r'\b' + re.escape(variation.lower()) + r'\b'
+            if re.search(pattern, normalized):
+                normalized = re.sub(pattern, standard_form, normalized)
+                break
+    
+    return normalized.strip()
+
+def _extract_street_name(address: str) -> str:
+    """Extrage doar numele străzii din adresă (fără tipul străzii)."""
+    if not address:
+        return ""
+    
+    address_lower = address.lower()
+    
+    # Listă cu toate variantele posibile pentru tipurile de străzi
+    street_types = []
+    for variations in ADRESA_VARIATIONS.values():
+        street_types.extend([v.lower() for v in variations])
+    
+    # Sortează după lungime (cele mai lungi primele) pentru a evita potriviri greșite
+    street_types.sort(key=len, reverse=True)
+    
+    # Încearcă să elimine tipul străzii
+    for street_type in street_types:
+        # Verifică dacă tipul străzii există în adresă
+        pattern = r'\b' + re.escape(street_type) + r'\b'
+        if re.search(pattern, address_lower):
+            # Elimină tipul străzii și orice puncte/spații în plus
+            cleaned = re.sub(pattern, '', address_lower)
+            cleaned = re.sub(r'[\.\s]+', ' ', cleaned).strip()
+            return cleaned
+    
+    # Dacă nu găsește tip de stradă, returnează adresa completă
+    return address_lower
+
+def _find_exact_match(user_address: str, user_punct_termic: str, site_location: str) -> bool:
+    """
+    Caută potrivire exactă între adresa+punct_termic utilizator și locația de pe site.
+    
+    Logica de căutare:
+    1. Verifică dacă punctul termic exact există în locația site-ului
+    2. Verifică dacă adresa exactă există în locația site-ului  
+    3. Fallback la căutarea parțială doar pentru adresă
+    """
+    if not site_location:
+        return False
+    
+    site_location_lower = site_location.lower()
+    user_address_lower = user_address.lower() if user_address else ""
+    user_punct_lower = user_punct_termic.lower() if user_punct_termic else ""
+    
+    _LOGGER.debug(f"Căutare precisă - Adresă: '{user_address}', Punct: '{user_punct_termic}', Site: '{site_location}'")
+    
+    # Cazul 1: Avem atât adresă cât și punct termic specific
+    if user_address and user_punct_termic:
+        # Verifică dacă ambele sunt prezente în locația site-ului
+        address_in_site = user_address_lower in site_location_lower
+        punct_in_site = user_punct_lower in site_location_lower
+        
+        if address_in_site and punct_in_site:
+            _LOGGER.info(f"✅ Potrivire exactă găsită: '{user_address}' + '{user_punct_termic}' în '{site_location}'")
+            return True
+        
+        # Dacă punctul termic este exact în locație, consideră potrivire
+        if punct_in_site and any(word in site_location_lower for word in user_punct_lower.split()):
+            _LOGGER.info(f"✅ Potrivire după punct termic: '{user_punct_termic}' în '{site_location}'")
+            return True
+    
+    # Cazul 2: Doar adresă fără punct termic specific
+    elif user_address and not user_punct_termic:
+        # Verifică dacă adresa este în locația site-ului
+        if user_address_lower in site_location_lower:
+            _LOGGER.info(f"✅ Potrivire după adresă: '{user_address}' în '{site_location}'")
+            return True
+        
+        # Verifică cu normalizare
+        user_norm = _normalize_address(user_address)
+        site_norm = _normalize_address(site_location)
+        if user_norm and site_norm and user_norm in site_norm:
+            _LOGGER.info(f"✅ Potrivire normalizată: '{user_address}' în '{site_location}'")
+            return True
+    
+    # Cazul 3: Doar punct termic fără adresă specifică
+    elif user_punct_termic and not user_address:
+        if user_punct_lower in site_location_lower:
+            _LOGGER.info(f"✅ Potrivire doar punct termic: '{user_punct_termic}' în '{site_location}'")
+            return True
+    
+    _LOGGER.debug(f"❌ Nu s-a găsit potrivire precisă pentru '{user_address}' + '{user_punct_termic}' în '{site_location}'")
+    return False
 
 class CmtebSensor(SensorEntity):
     """Representation of a CMTEB Sensor."""
@@ -199,9 +197,10 @@ class CmtebSensor(SensorEntity):
     @property
     def friendly_name(self):
         """Return the friendly name of the sensor."""
+        base_name = f"CMTEB {self._friendly_name}"
         if self._punct_termic:
-            return f"CMTEB {self._friendly_name} - {self._address} ({self._punct_termic})"
-        return f"CMTEB {self._friendly_name} - {self._address}"
+            return f"{base_name} - {self._address} ({self._punct_termic})"
+        return f"{base_name} - {self._address}"
 
     @property
     def state(self):
@@ -227,14 +226,22 @@ class CmtebSensor(SensorEntity):
         """Fetch data from CMTEB website with precise matching."""
         try:
             headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'ro-RO,ro;q=0.9,en;q=0.8',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Connection': 'keep-alive',
             }
 
+            # Folosim session pentru a gestiona redirect-urile automat
             session = requests.Session()
             session.headers.update(headers)
             
-            response = session.get(URL_CMTEB, timeout=30, allow_redirects=True)
+            response = session.get(
+                URL_CMTEB, 
+                timeout=30,
+                allow_redirects=True
+            )
             
             if response.status_code != 200:
                 self._state = f"Eroare HTTP {response.status_code}"
@@ -247,6 +254,7 @@ class CmtebSensor(SensorEntity):
                 }
                 return False
 
+            # Parse the HTML
             soup = BeautifulSoup(response.content, 'html.parser')
             tables = soup.find_all('table')
 
@@ -261,10 +269,11 @@ class CmtebSensor(SensorEntity):
                 }
                 return True
 
+            # Caută datele pentru adresa + punct termic specific
             data_gasita = False
             
             for table in tables:
-                rows = table.find_all('tr')[1:]
+                rows = table.find_all('tr')[1:]  # Skip header row
                 
                 for row in rows:
                     cols = [ele.text.strip() for ele in row.find_all('td')]
@@ -272,6 +281,7 @@ class CmtebSensor(SensorEntity):
                     if len(cols) >= 5:
                         location_text = cols[1] if len(cols) > 1 else ""
                         
+                        # Verifică potrivirea precisă cu adresa + punct termic
                         if _find_exact_match(self._address, self._punct_termic, location_text):
                             agent_afectat = cols[2] if len(cols) > 2 else "N/A"
                             cauza = cols[3] if len(cols) > 3 else "N/A"
@@ -279,10 +289,6 @@ class CmtebSensor(SensorEntity):
 
                             if self._type == "agent_afectat":
                                 self._state = agent_afectat
-                                # Actualizează istoricul
-                                now = datetime.now()
-                                month_key = f"{now.year}-{now.month:02d}"
-                                MONTHLY_HISTORY.update_state(month_key, agent_afectat)
                             elif self._type == "cauza_interventie":
                                 self._state = cauza
                             elif self._type == "data_estimata_reparatie":
@@ -297,30 +303,28 @@ class CmtebSensor(SensorEntity):
                             }
                             self._available = True
                             data_gasita = True
+                            _LOGGER.info(f"✅ Date găsite pentru '{self._address}' + '{self._punct_termic}' în locația '{location_text}'")
                             break
                 
                 if data_gasita:
                     break
 
             if not data_gasita:
+                # Dacă nu s-au găsit date pentru combinația exactă
                 self._state = "Fără întreruperi"
                 self._available = True
-                if self._type == "agent_afectat":
-                    now = datetime.now()
-                    month_key = f"{now.year}-{now.month:02d}"
-                    MONTHLY_HISTORY.update_state(month_key, "Fără întreruperi")
-                    
                 self._attrs = {
                     "Adresa": self._address,
                     "Punct_Termic": self._punct_termic,
                     "Ultima_Actualizare": time.strftime("%Y-%m-%d %H:%M:%S"),
                     "Status": "Nu s-au găsit întreruperi pentru această combinație adresă+punct termic"
                 }
+                _LOGGER.info(f"ℹ️ Nu s-au găsit întreruperi pentru: '{self._address}' + '{self._punct_termic}'")
             
             return True
 
         except Exception as e:
-            _LOGGER.error(f"Eroare la preluarea datelor: {e}")
+            _LOGGER.error(f"❌ Eroare la preluarea datelor: {e}")
             self._state = "Eroare conexiune"
             self._available = False
             self._attrs = {
@@ -334,113 +338,3 @@ class CmtebSensor(SensorEntity):
     async def async_update(self):
         """Update the sensor."""
         await self.hass.async_add_executor_job(self._fetch_data)
-
-class CmtebSensorIstoric(SensorEntity):
-    """Senzor pentru istoricul lunar."""
-    
-    def __init__(self, config_entry, sensor_type, friendly_name, address_slug):
-        """Initialize the history sensor."""
-        self._config_entry = config_entry
-        self._type = sensor_type
-        self._friendly_name = friendly_name
-        self._address_slug = address_slug
-        self._state = "Calculare..."
-        self._attrs = {}
-        self._address = config_entry.data.get("adresa")
-        self._punct_termic = config_entry.data.get("punct_termic", "")
-        self._available = True
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return f"cmteb_{self._type}_{self._address_slug}"
-
-    @property
-    def friendly_name(self):
-        """Return the friendly name of the sensor."""
-        if self._punct_termic:
-            return f"CMTEB {self._friendly_name} - {self._address} ({self._punct_termic})"
-        return f"CMTEB {self._friendly_name} - {self._address}"
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self._state
-
-    @property
-    def available(self):
-        """Return if the sensor is available."""
-        return self._available
-
-    @property
-    def extra_state_attributes(self):
-        """Return the state attributes."""
-        return self._attrs
-
-    @property
-    def unique_id(self):
-        """Return a unique ID."""
-        return f"{self._config_entry.entry_id}_{self._type}"
-
-    async def async_update(self):
-        """Update the sensor."""
-        try:
-            stats = MONTHLY_HISTORY.get_current_month_stats()
-            
-            # Calculează procentele
-            days_passed = stats["current_day"]
-            if days_passed > 0:
-                inc_percent = round((stats["incalzire_days"] / days_passed) * 100, 1)
-                acc_percent = round((stats["apa_calda_days"] / days_passed) * 100, 1)
-                func_percent = round((stats["functional_days"] / days_passed) * 100, 1)
-                def_percent = round((stats["deficienta_days"] / days_passed) * 100, 1)
-                acc_inc_percent = round((stats["acc_inc_days"] / days_passed) * 100, 1)
-            else:
-                inc_percent = acc_percent = func_percent = def_percent = acc_inc_percent = 0
-            
-            # Setează starea principală
-            self._state = stats["month"]
-            
-            # Setează atributele
-            self._attrs = {
-                "Luna": stats["month"],
-                "Zile in luna": stats["days_in_month"],
-                "Zile trecute": days_passed,
-                "Zile ramase": stats["days_in_month"] - days_passed,
-                "Zile inregistrate": stats["days_recorded"],
-                
-                # Statistici INC (Încălzire)
-                "INC oprit (zile)": stats["incalzire_days"],
-                "INC procent oprit": f"{inc_percent}%",
-                
-                # Statistici ACC (Apă Caldă)
-                "ACC oprit (zile)": stats["apa_calda_days"],
-                "ACC procent oprit": f"{acc_percent}%",
-                
-                # Statistici generale
-                "Zile functional": stats["functional_days"],
-                "Procent functional": f"{func_percent}%",
-                
-                "Zile deficienta": stats["deficienta_days"],
-                "Procent deficienta": f"{def_percent}%",
-                
-                "Zile ACC+INC oprit": stats["acc_inc_days"],
-                "Procent ACC+INC oprit": f"{acc_inc_percent}%",
-                
-                # Informații suplimentare
-                "Adresa": self._address,
-                "Punct Termic": self._punct_termic,
-                "Ultima actualizare": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            }
-            
-            self._available = True
-            
-        except Exception as e:
-            _LOGGER.error(f"Eroare la actualizarea istoricului: {e}")
-            self._state = "Eroare"
-            self._available = False
-            self._attrs = {
-                "Eroare": str(e),
-                "Adresa": self._address,
-                "Ultima incercare": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            }
