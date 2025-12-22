@@ -1,6 +1,6 @@
- v.23.11.2025.a - **CMTEB** 🔥
+ ## v.1.2.1 - **CMETB Termoficare** 🔥
  
- **Cautare mai precisa**
+ ### **Cautare mai precisa**
  - 🛣️ dupa strada
  - 🏭 dupa punct termic
  - Strada si punctul termic sunt obligatorii pentru o precize buna (ex. pe pantelimon sunt vro 20 de puncte termice, daca nu se pune si punctul termic integrarea va afisa eronat datele).
@@ -8,52 +8,52 @@
 
 ---
 
-v.23.11.2025 - **CMTEB** 🔥
+### v.1.2.0 - **CMETB Termoficare** 🔥
 
 ---
 
-v.22.11.2025.c - **CMTEB** 🔥
+### v.1.0.1 - **CMETB Termoficare** 🔥
 
 
 ---
- v.22.11.2025.b - **CMTEB** 🔥
+### v.1.0.0 - **CMETB Termoficare** 🔥
 
-✨ Caracteristici
+### ✨ *Caracteristici*
 - ✅ Integrare completa cu HACS
-- ✅ Extragere date de bază
-- ✅ Configurare interfață grafica
-- ✅ Trei senzori 🏠 Locație 
+- ✅ Extragere date de baza
+- ✅ Configurare interfata grafica
+- ✅ Trei senzori 🏠 Locatie 
    -  🔥 Agent afectat
-   -  🛠️ Cauză
+   -  🛠️ Cauza
    -  📅 Data estimata reparatiei
 - ✅ **Cautare dupa strada**
 - ✅ **Cauatre dupa punct termic (optional)**
 
-✨ Funcționalități Principale
-- ✅ Monitorizare în timp real a întreruperilor la termoficare
-- ✅ Sistem inteligent de căutare cu recunoaștere prescurtări
-- ✅ Configurare grafică - fără editare manuală YAML
-- ✅ Senzori cu nume semnificative bazate pe adresă
+### ✨ *Functionalitati Principale*
+- ✅ Monitorizare in timp real a intreruperilor la termoficare
+- ✅ Sistem inteligent de cautare cu recunoastere prescurtari
+- ✅ Configurare grafica - fara editare manuală YAML
+- ✅ Senzori cu nume semnificative bazate pe adresa
 - ✅ Actualizare automată** la fiecare 30 de minute
 - ✅ Support pentru multiple adrese simultan
 - ✅ Carduri Lovelace personalizate incluse
 
-⚡ Setări Performanță
+### ⚡ *Setari Performanta*
 - ✅ Interval Update: 30 minute (optimizat)
 - ✅ Timeout Conexiune: 30 secunde
-- ✅ Retry Logic: 3 încercări automat
+- ✅ Retry Logic: 3 încercari automat
 - ✅ Memorie: Utilizare minimă
 
-⚠️ Limitări Cunoscute
+### ⚠️ *Limitari Cunoscute*
 - ✅ Dependent de structura site-ului CMTEB
-- ✅ Nu funcționează în timpul mentenanței site-ului
-- ✅ Limitări de rate limiting (nu actualiza prea des)
+- ✅ Nu functioneaza in timpul mentenantei site-ului
+- ✅ Limitari de rate limiting (nu actualiza prea des)
 
-🙏 **Multumiri
+### 🙏 *Multumiri*
 - ✅ CMTEB București pentru datele deschise
 - ✅ Home Assistant Community pentru suport
-- ✅ HACS pentru ușurința în distribuție
+- ✅ HACS pentru usurinta in distributie
 - ✅ GitHub pentru gazduire
 
-### 📄 **Licență**
-- ✅ **Acest proiect este licențiat sub MIT License - vezi fișierul [LICENSE](https://license/) pentru detalii.**
+### 📄 *Licenta*
+- ✅ **Acest proiect este licentiat sub MIT License - vezi fisierul [LICENSE](https://license/) pentru detalii.**
