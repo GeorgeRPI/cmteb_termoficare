@@ -99,28 +99,28 @@ Fiecare adresa adaugata creeaza 3 senzori unici:
 
 ## 🎨 Carduri Lovelace
 ### 📱 Card:  Stare Detaliata 3
-![Card Stare Detaliata 3](images/card3.png)
+![Card Stare Detaliata 3](images/card3a.png)
 
 ```yaml
 type: vertical-stack
 cards:
   - type: custom:button-card
-    name: "🔥Status: CMTEB Bucuresti"
+    name: "🔥Status: CMTEB București"
     tap_action:
       action: none
     hold_action:
       action: none
     styles:
       card:
-        - background: linear-gradient(135deg,
+        - background: linear-gradient(135deg, 1a1a2e 0%, 16213e 100%)
         - color: white
         - font-weight: bold
-        - border-radius: 10px
-        - padding: 20px
+        - border-radius: 13px
+        - padding: 10px
         - text-align: center
         - box-shadow: var(--box-shadow)
         - border: 2px solid gold
-        - margin-bottom: 10px
+        - margin-bottom: 1px
       icon:
         - color: gold
         - width: 35px
@@ -129,12 +129,12 @@ cards:
       name:
         - font-size: 22px
         - text-transform: uppercase
-        - letter-spacing: 1px
+        - letter-spacing: 0.8px
   - type: markdown
     content: >
-      # 🛣️ Strada: {{
+      # 🛣️ Str. {{
       state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
-      'Adresa') }}  
+      'Adresa') }}
 
 
       ## 🔥 Punct Termic: {{
@@ -148,7 +148,7 @@ cards:
           text-align: center;
           font-weight: bold;
           padding: 15px;
-          border-radius: 10px;
+          border-radius: 13px;
           box-shadow: var(--box-shadow);
           border: 2px solid white;
           margin-bottom: 10px;
@@ -161,17 +161,17 @@ cards:
     entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
     name: |
       [[[
-        if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'Oprire INC') return '🔥 INCALZIRE (INC)';
-        if (entity.state === 'APĂ CALDĂ' || entity.state === 'Oprire ACC') return '🚿 APĂ CALDA (ACC)';
-        if (entity.state === 'Oprire ACC/INC') return 'OPRITA<br> 🚿 APA CALDA si 🔥 INCALZIREA'; 
+        if (entity.state === 'INCALZIRE' || entity.state === 'Oprire INC') return '🔥 INCALZIRE (INC)';
+        if (entity.state === 'APA CALDA' || entity.state === 'Oprire ACC') return '🚿 APA CALDA (ACC)';
+        if (entity.state === 'Oprire ACC/INC') return 'OPRITA<br>🚿 APA CALDA si 🔥 INCALZIREA'; 
         if (entity.state === 'Deficienta INC') return '⚠️ DEFICIENTA 🔥 INCALZIRE';
         if (entity.state === 'Deficienta ACC') return '⚠️ DEFICIENTA 🚿 APA CALDA';
-        if (entity.state === 'Deficienta ACC/INC') return '⚠️ DEFICIENTA<br> 🚿 APA CALDA si 🔥 INCALZIRE';
+        if (entity.state === 'Deficienta ACC/INC') return '⚠️ DEFICIENTA<br>🚿 APA CALDA si 🔥 INCALZIRE';
         return '🌡️ SISTEM FUNCȚIONAL';
       ]]]
     icon: |
       [[[
-        if (entity.state === 'ÎNCĂLZIRE' || entity.state === 'APA CALDA' || entity.state.includes('Deficienta') || entity.state.includes('Oprire')) return 'mdi:alert-circle-outline';
+        if (entity.state === 'INCALZIRE' || entity.state === 'APA CALDA' || entity.state.includes('Deficienta') || entity.state.includes('Oprire')) return 'mdi:alert-circle-outline';
         return 'mdi:check-circle-outline';
       ]]]
     state_display: |
@@ -179,22 +179,35 @@ cards:
         if (entity.state === 'INCALZIRE' || entity.state === 'Oprire INC') return '🚨 OPRITA';
         if (entity.state === 'APA CALDA' || entity.state === 'Oprire ACC') return '🚨 OPRITA';
         if (entity.state === 'Oprire ACC/INC') return '🚨 OPRITA';
-        if (entity.state === 'Deficienta INC') return '🚫 DEFICIENTA';
-        if (entity.state === 'Deficienta ACC') return '🚫 DEFICIENTA';
-        if (entity.state === 'Deficienta ACC/INC') return '🚫 DEFICIENTA';
+        if (entity.state === 'Deficienta INC') return '⚠️ DEFICIENTA';
+        if (entity.state === 'Deficienta ACC') return '⚠️ DEFICIENTA';
+        if (entity.state === 'Deficienta ACC/INC') return '⚠️ DEFICIENTA';
         return '🟢 ACTIV';
       ]]]
     styles:
       card:
         - background-color: |
             [[[
+              // GALBEN pentru toate stările cu "Deficienta"
+              if (entity.state.includes('Deficienta')) return '#FFCC00';
+              
+              // ROSU pentru toate stările cu "Oprire" și pentru INCALZIRE/APA CALDA
               if (entity.state === 'INCALZIRE' || entity.state === 'APA CALDA' || 
-                  entity.state.includes('Deficienta') || entity.state.includes('Oprire')) return '#ff4444';
+                  entity.state.includes('Oprire')) return '#ff4444';
+              
+              // VERDE doar pentru SISTEM FUNCTIONAL
               return '#4CAF50';
             ]]]
-        - color: white
+        - color: |
+            [[[
+              // SCRIS NEGRU doar pentru stările GALBENE (Deficiență)
+              if (entity.state.includes('Deficienta')) return '#000000';
+              
+              // SCRIS ALB pentru toate celelalte stări
+              return '#FFFFFF';
+            ]]]
         - font-weight: bold
-        - border-radius: 10px
+        - border-radius: 13px
         - padding: 15px
         - text-align: center
         - box-shadow: var(--box-shadow)
@@ -204,9 +217,16 @@ cards:
         - flex-direction: column
         - justify-content: center
         - align-items: center
-        - margin-bottom: 10px
+        - margin-bottom: 1px
       icon:
-        - color: white
+        - color: |
+            [[[
+              // ICONITA NEGRĂ doar pentru stările GALBENE (Deficiență)
+              if (entity.state.includes('Deficienta')) return '#000000';
+              
+              // ICONITA ALBĂ pentru toate celelalte stări
+              return '#FFFFFF';
+            ]]]
         - width: 40px
         - height: 40px
       name:
@@ -226,14 +246,30 @@ cards:
         - background-color: |
             [[[
               const mainState = states['sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC'].state;
+              
+              // GALBEN pentru deficiențe
+              if (mainState.includes('Deficienta')) return '#FFCC00';
+              
+              // ROSU pentru oprire și alte stări problematice
               if (mainState === 'INCALZIRE' || mainState === 'APA CALDA' || 
-                  mainState.includes('Deficienta') || mainState.includes('Oprire')) {
+                  mainState.includes('Oprire')) {
                 return '#ff4444';
               }
+              
+              // NEGRU pentru sistem funcțional
               return '#000000';
             ]]]
-        - color: white
-        - border-radius: 10px
+        - color: |
+            [[[
+              const mainState = states['sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC'].state;
+              
+              // SCRIS NEGRU doar pentru stările GALBENE (Deficiență)
+              if (mainState.includes('Deficienta')) return '#000000';
+              
+              // SCRIS ALB pentru toate celelalte stări
+              return '#FFFFFF';
+            ]]]
+        - border-radius: 13px
         - padding: 15px
         - text-align: center
         - box-shadow: var(--box-shadow)
@@ -243,9 +279,18 @@ cards:
         - flex-direction: column
         - justify-content: center
         - align-items: center
-        - margin-bottom: 10px
+        - margin-bottom: 1px
       icon:
-        - color: white
+        - color: |
+            [[[
+              const mainState = states['sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC'].state;
+              
+              // ICONITA NEGRĂ doar pentru stările GALBENE (Deficiență)
+              if (mainState.includes('Deficienta')) return '#000000';
+              
+              // ICONITA ALBĂ pentru toate celelalte stări
+              return '#FFFFFF';
+            ]]]
         - width: 40px
         - height: 40px
         - margin-bottom: 8px
@@ -258,7 +303,7 @@ cards:
         - font-weight: bold
   - type: custom:button-card
     entity: sensor.cmteb_data_estimata_reparatie_STRADA_PUNCT_TERMIC
-    name: 📅 Data/ora estimarii punerii in functiune
+    name: 📅 Data/ora estimarii punerii în functiune
     icon: mdi:calendar-clock
     show_state: true
     styles:
@@ -266,14 +311,30 @@ cards:
         - background-color: |
             [[[
               const mainState = states['sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC'].state;
+              
+              // GALBEN pentru deficiențe
+              if (mainState.includes('Deficienta')) return '#FFCC00';
+              
+              // ROSU pentru oprire și alte stări problematice
               if (mainState === 'INCALZIRE' || mainState === 'APA CALDA' || 
-                  mainState.includes('Deficienta') || mainState.includes('Oprire')) {
+                  mainState.includes('Oprire')) {
                 return '#ff4444';
               }
+              
+              // NEGRU pentru sistem funcțional
               return '#000000';
             ]]]
-        - color: white
-        - border-radius: 10px
+        - color: |
+            [[[
+              const mainState = states['sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC'].state;
+              
+              // SCRIS NEGRU doar pentru stările GALBENE (Deficiență)
+              if (mainState.includes('Deficienta')) return '#000000';
+              
+              // SCRIS ALB pentru toate celelalte stări
+              return '#FFFFFF';
+            ]]]
+        - border-radius: 13px
         - padding: 15px
         - text-align: center
         - box-shadow: var(--box-shadow)
@@ -284,7 +345,16 @@ cards:
         - justify-content: center
         - align-items: center
       icon:
-        - color: white
+        - color: |
+            [[[
+              const mainState = states['sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC'].state;
+              
+              // ICONITA NEGRĂ doar pentru stările GALBENE (Deficiență)
+              if (mainState.includes('Deficienta')) return '#000000';
+              
+              // ICONITA ALBĂ pentru toate celelalte stări
+              return '#FFFFFF';
+            ]]]
         - width: 40px
         - height: 40px
         - margin-bottom: 8px
@@ -295,6 +365,44 @@ cards:
       state:
         - font-size: 16px
         - font-weight: bold
+  - type: custom:button-card
+    entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
+    name: Actualizeaza manual
+    icon: mdi:refresh
+    layout: icon_name
+    show_state: false
+    tap_action:
+      action: call-service
+      service: homeassistant.update_entity
+      target:
+        entity_id:
+          - sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
+          - sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC
+          - sensor.cmteb_data_estimata_reparatie_STRADA_PUNCT_TERMIC
+    styles:
+      card:
+        - border-radius: 10px
+        - border: 1px solid var(--divider-color)
+        - padding: 4px 8px !important
+        - height: 34px
+        - background: >-
+            radial-gradient(circle at center, rgba(var(--rgb-primary-color),
+            0.08) 0%, transparent 70%)
+        - transition: all 0.3s ease
+      card:hover:
+        - background: >-
+            radial-gradient(circle at center, rgba(var(--rgb-primary-color),
+            0.2) 0%, rgba(var(--rgb-primary-color), 0.08) 70%)
+        - border-color: var(--primary-color)
+      name:
+        - font-size: 11px
+        - text-transform: uppercase
+        - letter-spacing: 0.7px
+      icon:
+        - color: var(--primary-color)
+    state_color: false
+    show_header_toggle: false
+
 
 
 ```
