@@ -98,7 +98,7 @@ Fiecare adresa adaugata creeaza 3 senzori unici:
 ---
 
 ## 🎨 Carduri Lovelace
-### 📱 Card:  Stare Detaliata 3
+### 📱 Card:  Stare Detaliata 3 si cu Actualizare manuala
 ![Card Stare Detaliata 3](images/card3a.png)
 
 ```yaml
