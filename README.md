@@ -17,6 +17,7 @@ Integrare pentru monitorizarea in timp real a intreruperilor in furnizarea agent
 - ✅ **Configurare grafica** - fara editare manuală YAML
 - ✅ **Senzori cu nume semnificative** bazate pe adresă
 - ✅ **Actualizare automata** la fiecare 30 de minute
+- ✅ **Actualizare manuala** cand se doreste
 - ✅ **Support pentru multiple adrese** simultan
 - ✅ **Carduri Lovelace personalizate** incluse
 
