@@ -104,7 +104,7 @@ Fiecare adresa adaugata creeaza 3 senzori unici:
       - 🟡 GALBEN + Text NEGRU = Deficienta Apa calda, Incalzire, Apa calda si Incalzire
       - 🔴 ROȘU + Text NEGRU = Oprire Apa calda, Incalzire, Apa calda si Incalzire
 
-![Card Stare Detaliata 3](images/card3a.png)
+![Card Stare Detaliata 3](images/card3b.png)
 
 ```yaml
 type: vertical-stack
@@ -384,27 +384,57 @@ cards:
           - sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
           - sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC
           - sensor.cmteb_data_estimata_reparatie_STRADA_PUNCT_TERMIC
+    show_label: true
+    label: |
+      [[[
+        // Funcție pentru formatarea timpului
+        function formatTimeAgo(date) {
+          const now = new Date();
+          const diff = Math.floor((now - date) / 1000);
+          
+          if (diff < 2) return 'chiar acum';
+          if (diff < 60) return `${diff} secunde`;
+          if (diff < 120) return '1 minut';
+          if (diff < 3600) return `${Math.floor(diff / 60)} minute`;
+          if (diff < 7200) return '1 oră';
+          if (diff < 86400) return `${Math.floor(diff / 3600)} ore`;
+          if (diff < 172800) return '1 zi';
+          return `${Math.floor(diff / 86400)} zile`;
+        }
+        
+        // Returnează textul
+        const lastUpdated = new Date(entity.last_updated);
+        return `Actualizat acum ${formatTimeAgo(lastUpdated)}`;
+      ]]]
     styles:
       card:
-        - border-radius: 10px
+        - border-radius: 7px
         - border: 1px solid var(--divider-color)
         - padding: 4px 8px !important
-        - height: 34px
+        - height: 45px
         - background: >-
             radial-gradient(circle at center, rgba(var(--rgb-primary-color),
             0.08) 0%, transparent 70%)
         - transition: all 0.3s ease
+        - border: 2px solid red
       card:hover:
         - background: >-
             radial-gradient(circle at center, rgba(var(--rgb-primary-color),
             0.2) 0%, rgba(var(--rgb-primary-color), 0.08) 70%)
         - border-color: var(--primary-color)
       name:
-        - font-size: 11px
+        - font-size: 13px
         - text-transform: uppercase
         - letter-spacing: 0.7px
+        - margin-bottom: 2px
       icon:
         - color: var(--primary-color)
+      label:
+        - font-size: 10px
+        - color: var(--secondary-text-color)
+        - font-style: italic
+        - text-align: center
+        - margin-top: "-2px"
     state_color: false
     show_header_toggle: false
 
