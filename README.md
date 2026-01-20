@@ -701,4 +701,4 @@ Dacă ai intrebari sau probleme:
 🔗 Repository: https://github.com/georgeRPI/cmteb_termoficare
 
 ---
-## ✨ Facut cu pasiune pentru comunitatea Home Assistant Romania ✨
+## ✨ Pentru comunitatea Home Assistant Romania ✨
