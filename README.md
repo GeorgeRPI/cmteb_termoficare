@@ -730,16 +730,16 @@ Repository: https://github.com/georgeRPI/cmteb_termoficare
 
 <table>
 <tr>
-<td><strong>✨ Făcut cu sudoare și înjurături la CMTEB ✨</strong></td>
+<td><strong>✨ Facut cu sudoare si injuraturi la CMTEB ✨</strong></td>
 </tr>
 <tr>
-<td><strong>✨ Dezvoltat pentru bucureștenii care vor să știe când au apă caldă! 😅 ✨</strong></td>
+<td><strong>✨ Dezvoltat pentru bucurestenii care vor sa stie cand au apa calda! 😅 ✨</strong></td>
 </tr>
 <tr>
-<td><strong>✨ Făcut cu drag(oste) pentru Bucureștiul care merită apă caldă! 🔥🚿 ✨</strong></td>
+<td><strong>✨ Facut cu drag(oste) pentru Bucurestiul care merită apa calda! 🔥🚿 ✨</strong></td>
 </tr>
 <tr>
-<td><strong>✨ De la Crângași la Băneasa, acum știi când ai duș fierbinte! 🛁💪 ✨</strong></td>
+<td><strong>✨ De la Crangasi la Baneasa, acum stii cand ai dus fierbinte! 🛁💪 ✨</strong></td>
 </tr>
 </table>
 
