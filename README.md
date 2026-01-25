@@ -698,7 +698,18 @@ Dacă ai intrebari sau probleme:
  2. Cauta issues existente pe GitHub
  3. Deschide un nou issue daca problema nu a fost raportata
 
-🔗 Repository: https://github.com/georgeRPI/cmteb_termoficare
-
+ Repository: https://github.com/georgeRPI/cmteb_termoficare
 ---
-## ✨ Pentru comunitatea Home Assistant Romania ✨
+
+## 🙏 MULȚUMIRI BUCUREȘTI LEGENDĂ
+
+<p align="center">
+<img src="https://img.shields.io/badge/CMTEB-Integrare%20HA-brightgreen?style=for-the-badge&logo=homeassistant" alt="CMTEB HA">
+</p>
+
+**✨ Făcut cu sudoare și înjurături la CMTEB ✨**  
+**✨ Dezvoltat pentru bucureștenii care vor să știe când au apă caldă! 😅 ✨**
+**✨ Făcut cu drag(oste) pentru Bucureștiul care merită apă caldă! 🔥🚿 ✨**
+**✨ De la Crangasi la Baneasa, acum stii cand ai dus fierbinte! 🛁💪 ✨**
+
+![ApaCaldăBucurești](https://img.shields.io/badge/Apă%20Caldă-București-00D4AA?style=flat-square&logo=homeassistant&logoColor=white)
