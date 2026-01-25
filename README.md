@@ -654,7 +654,7 @@ cards:
 ## 🔔 Automatizari
 
 ### 📢 Alerta Notificare Intrerupere
-![Notificare Telegram](images/notificare.png)
+![Notificare Telegram](images/notifcare.png)
 
 ```yaml
 alias: "🚨 CMTEB Termoficare "
