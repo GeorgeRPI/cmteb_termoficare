@@ -28,8 +28,8 @@ Integrarea recunoaște automat toate (aproape toate) variantele de scriere pentr
 
 | Tu introduci: | Site-ul CMTEB afiseaza: | Rezultat: |
 |---------------|-------------------------|-----------|
-| `str Moisil` | `Strada Grigore C. Moisil` | ✅ **Potrivire** |
-| `bd. Unirii` | `Bulevardul Unirii` | ✅ **Potrivire** |
+| `str Litovoi Voievod` | ` Str Litovoi Voievod` | ✅ **Potrivire** |
+| `Apusului` | `Str Apusului` | ✅ **Potrivire** |
 | `Sos Pantelimon` | `Şoseaua Pantelimon` | ✅ **Potrivire** |
 | `drm Taberei` | `Drumul Taberei` | ✅ **Potrivire** |
 | `p-ta Romană` | `Piața Romană` | ✅ **Potrivire** |
