@@ -726,7 +726,7 @@ Repository: https://github.com/georgeRPI/cmteb_termoficare
 
 ---
 
-## 🙏 MULȚUMIRI BUCUREȘTI LEGENDĂ
+## 🙏 MULȚUMIRI...
 
 <table>
 <tr>
