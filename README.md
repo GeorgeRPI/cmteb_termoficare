@@ -575,7 +575,7 @@ cards:
 ```
 
 ### 📱 Card:  Stare Detaliata 1
-![Card Stare Detaliata 3](images/card1.png)
+![Card Stare Detaliata 1](images/card1.png)
 
 ```yaml
 type: custom:vertical-stack-in-card
@@ -584,7 +584,7 @@ cards:
   - type: conditional
     conditions:
       - condition: state
-        entity: sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC
+        entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
         state_not: Făra Intreruperi
     card:
       type: markdown
@@ -592,18 +592,18 @@ cards:
         ### ⚠️ INTRERUPERE ACTIVA
 
         **Locatie:** {{
-        states.sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC.attributes.Adresa
+        states.sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC.attributes.Adresa
         }}
 
         **Agent afectat:** {{
-        states.sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC.state }}
+        states.sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC.state }}
 
         **Cauza:** {{
-        states.sensor.cmteb_cauza_interventie_STRADA_PUNC_TERMIC.state
+        states.sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC.state
         }}
 
         **Data estimata reparare:** {{
-        states.sensor.cmteb_data_estimata_reparatie_STRADA_PUNC_TERMIC.state
+        states.sensor.cmteb_data_estimata_reparatie_STRADA_PUNCT_TERMIC.state
         }}
       card_mod:
         style: |
@@ -615,7 +615,7 @@ cards:
   - type: conditional
     conditions:
       - condition: state
-        entity: sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC
+        entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
         state: Fara intreruperi
     card:
       type: markdown
@@ -623,7 +623,7 @@ cards:
         ### ✅ NICI O INTRERUPERE
 
         **Locatie:** {{
-        states.sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC.attributes.Adresa
+        states.sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC.attributes.Adresa
         }}
 
         **Status:** Toate serviciile functionează normal
@@ -635,13 +635,13 @@ cards:
           }
   - type: entities
     entities:
-      - entity: sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC
+      - entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
         name: Agent Termic Afectat
         icon: mdi:fire-circle
-      - entity: sensor.cmteb_cauza_interventie_STRADA_PUNC_TERMIC
+      - entity: sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC
         name: Motivul Interventiei
         icon: mdi:tooltip-text
-      - entity: sensor.cmteb_data_estimata_reparatie_STRADA_PUNC_TERMIC
+      - entity: sensor.cmteb_data_estimata_reparatie_STRADA_PUNCT_TERMIC
         name: Data Estimata Reparare
         icon: mdi:calendar-check
     title: Detalii Tehnice
@@ -654,13 +654,13 @@ cards:
 ## 🔔 Automatizari
 
 ### 📢 Alerta Notificare Intrerupere
+![Notificare Telegram](images/notificare.png)
 
-![Card Stare Detaliata 2](images/notificare.png)
 ```yaml
 alias: "🚨 CMTEB Termoficare "
 description: Alerta CMTEB
 triggers:
-  - entity_id: sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC
+  - entity_id: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
     to:
       - APA CALDA
       - INCALZIRE
@@ -681,17 +681,17 @@ actions:
         🚨 ALERTA TERMOFICARE
 
         📍Adresa: {{
-        state_attr('sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC',
+        state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
         'Adresa') }}
 
         🔥 Agentul afectat: {{
-        states('sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC') }}
+        states('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC') }}
 
         🛠️ Cauza: {{
-        states('sensor.cmteb_cauza_interventie_STRADA_PUNC_TERMIC') }}
+        states('sensor.cmteb_cauza_interventie_STRADA_PUNCT_TERMIC') }}
 
         ⏰ Data/ora punerii în funcțiune: {{
-        states('sensor.cmteb_data_estimata_reparatie_STRADA_PUNC_TERMIC')
+        states('sensor.cmteb_data_estimata_reparatie_STRADA_PUNCT_TERMIC')
         }}
 
         🕐 {{ now().strftime('%d/%m %H:%M')  }}
