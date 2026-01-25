@@ -656,6 +656,44 @@ cards:
 ### 📢 Alerta Notificare Intrerupere
 
 ```yaml
+alias: "🚨 CMTEB Termoficare "
+description: Alerta CMTEB
+triggers:
+  - entity_id: sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC
+    to:
+      - APA CALDA
+      - INCALZIRE
+      - Oprire INC
+      - Oprire ACC
+      - Oprire ACC/INC
+      - Deficienta ACC/INC
+      - Deficienta ACC
+      - Deficienta INC
+      - Functionare normala
+      - Fara intreruperi
+      - Fără întreruperi
+    trigger: state
+actions:
+  - action: telegram_bot.send_message  ## Sau alta aplicatie pentru notificari
+    data:
+      message: >
+        🚨 ALERTA TERMOFICARE
+
+        📍Adresa: {{
+        state_attr('sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC',
+        'Adresa') }}
+
+        🔥 Agentul afectat: {{
+        states('sensor.cmteb_agent_afectat_STRADA_PUNC_TERMIC') }}
+
+        🛠️ Cauza: {{
+        states('sensor.cmteb_cauza_interventie_STRADA_PUNC_TERMIC') }}
+
+        ⏰ Data/ora punerii în funcțiune: {{
+        states('sensor.cmteb_data_estimata_reparatie_STRADA_PUNC_TERMIC')
+        }}
+
+        🕐 {{ now().strftime('%d/%m %H:%M')  }}
 
 
 ```
