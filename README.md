@@ -655,6 +655,7 @@ cards:
 
 ### 📢 Alerta Notificare Intrerupere
 
+![Card Stare Detaliata 2](images/notificare.png)
 ```yaml
 alias: "🚨 CMTEB Termoficare "
 description: Alerta CMTEB
