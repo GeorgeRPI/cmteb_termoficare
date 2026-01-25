@@ -656,24 +656,7 @@ cards:
 ### 📢 Alerta Notificare Intrerupere
 
 ```yaml
-alias: "Alerta Intrerupere Termoficare"
-trigger:
-  - platform: state
-    entity_id: sensor.cmteb_agent_afectat_STRADA
-    to: "INCALZIRE"
-  - platform: state
-    entity_id: sensor.cmteb_agent_afectat_STRADA
-    to: "APA CALDA"
-action:
-  - service: notify.mobile_app_telefonul_tau
-    data:
-      title: "⚠️ Intrerupere Termoficare Detectata"
-      message: |
-        S-a declansat o intrerupere la termoficare!
-        
-        📍 Locatie: {{ states.sensor.cmteb_agent_afectat_STRADA.attributes.Adresa }}
-        🔥 Agent afectat: {{ states.sensor.cmteb_agent_afectat_STRADA.state }}
-        🛠️ Cauză: {{ states.sensor.cmteb_cauza_interventie_STRADA.state }}
+
 
 ```
 ---
