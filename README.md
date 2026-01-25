@@ -3,8 +3,10 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 [![Home Assistant](https://img.shields.io/badge/Home_Assistant-2023.1%2B-green.svg)](https://www.home-assistant.io/)
+![ApaCaldaBucuresti](https://img.shields.io/badge/Apa%20Calda-Bucuresti-00D4AA?style=flat-square&logo=homeassistant&logoColor=white)
+![IntegrareHA](https://img.shields.io/badge/Integrare%20HA-purple?style=flat-square&logo=homeassistant&logoColor=white)
 
-Integrare pentru monitorizarea in timp real a intreruperilor in furnizarea agentului termic a Companiei Municipale TERMOENERGETICA Bucuresti.
+## Integrare pentru monitorizarea in timp real a intreruperilor in furnizarea agentului termic a Companiei Municipale TERMOENERGETICA Bucuresti.
 
 
 ---
@@ -698,18 +700,26 @@ Dacă ai intrebari sau probleme:
  2. Cauta issues existente pe GitHub
  3. Deschide un nou issue daca problema nu a fost raportata
 
- Repository: https://github.com/georgeRPI/cmteb_termoficare
+Repository: https://github.com/georgeRPI/cmteb_termoficare
+
 ---
 
 ## 🙏 MULȚUMIRI BUCUREȘTI LEGENDĂ
 
-<p align="center">
-<img src="https://img.shields.io/badge/CMTEB-Integrare%20HA-brightgreen?style=for-the-badge&logo=homeassistant" alt="CMTEB HA">
-</p>
+<table>
+<tr>
+<td><strong>✨ Făcut cu sudoare și înjurături la CMTEB ✨</strong></td>
+</tr>
+<tr>
+<td><strong>✨ Dezvoltat pentru bucureștenii care vor să știe când au apă caldă! 😅 ✨</strong></td>
+</tr>
+<tr>
+<td><strong>✨ Făcut cu drag(oste) pentru Bucureștiul care merită apă caldă! 🔥🚿 ✨</strong></td>
+</tr>
+<tr>
+<td><strong>✨ De la Crângași la Băneasa, acum știi când ai duș fierbinte! 🛁💪 ✨</strong></td>
+</tr>
+</table>
 
-**✨ Făcut cu sudoare și înjurături la CMTEB ✨**  
-**✨ Dezvoltat pentru bucureștenii care vor să știe când au apă caldă! 😅 ✨**
-**✨ Făcut cu drag(oste) pentru Bucureștiul care merită apă caldă! 🔥🚿 ✨**
-**✨ De la Crangasi la Baneasa, acum stii cand ai dus fierbinte! 🛁💪 ✨**
+</div>
 
-![ApaCaldăBucurești](https://img.shields.io/badge/Apă%20Caldă-București-00D4AA?style=flat-square&logo=homeassistant&logoColor=white)
