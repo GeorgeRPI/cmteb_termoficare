@@ -1,19 +1,8 @@
 {
-    "config": {
-        "step": {
-            "user": {
-                "data": {
-                    "adresa": "Address",
-                    "punct_termic": "Heating point"
-                }
-            }
-        },
-        "error": {
-            "adresa_required": "Address is required",
-            "punct_termic_required": "Heating point is required"
-        },
-        "abort": {
-            "already_configured": "Device is already configured"
-        }
+  "config": {
+    "error": {
+      "adresa_required": "Please enter an address",
+      "punct_termic_required": "Please enter the heating point"
     }
+  }
 }
