@@ -2,7 +2,6 @@
   "name": "CMTEB Termoficare",
   "content": "integration",
   "content_in_root": false,
-  "homeassistant": "2021.12.0",
   "render_readme": true,
   "domains": ["cmteb_termoficare"]
   "zip_release": false,
