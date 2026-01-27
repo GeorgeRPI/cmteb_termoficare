@@ -1,21 +1,87 @@
-if user_input is not None:
-    errors = {}
-    if not user_input.get("adresa"):
-        errors["adresa"] = "adresa_required"
-    if not user_input.get("punct_termic"):
-        errors["punct_termic"] = "punct_termic_required"
+"""Config flow for CMTEB Termoficare."""
+import voluptuous as vol
+from homeassistant import config_entries
+from homeassistant.core import callback
+import homeassistant.helpers.config_validation as cv
 
-    if not errors:
-        unique_id = f"cmteb_{user_input['adresa'].lower().replace(' ', '_')}"
-        await self.async_set_unique_id(unique_id)
-        self._abort_if_unique_id_configured()
-        return self.async_create_entry(
-            title=f"CMTEB {user_input['adresa']}",
-            data=user_input,
+from .const import DOMAIN
+
+
+class CMTEBConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+    """Handle a config flow for CMTEB Termoficare."""
+
+    VERSION = 1
+
+    async def async_step_user(self, user_input=None):
+        """Handle the initial step."""
+        # Schema cu Optional și default gol
+        data_schema = vol.Schema({
+            vol.Optional("adresa", default=""): cv.string,
+            vol.Optional("punct_termic", default=""): cv.string,
+        })
+
+        errors = {}
+
+        if user_input is not None:
+            # Validare manuală
+            if not user_input.get("adresa"):
+                errors["adresa"] = "adresa_required"
+            if not user_input.get("punct_termic"):
+                errors["punct_termic"] = "punct_termic_required"
+
+            if not errors:
+                # Creează unique_id
+                unique_id = f"cmteb_{user_input['adresa'].lower().replace(' ', '_')}"
+                await self.async_set_unique_id(unique_id)
+                self._abort_if_unique_id_configured()
+
+                return self.async_create_entry(
+                    title=f"CMTEB {user_input['adresa']}",
+                    data=user_input,
+                )
+
+        return self.async_show_form(
+            step_id="user",
+            data_schema=data_schema,
+            errors=errors,
         )
 
-return self.async_show_form(
-    step_id="user",
-    data_schema=data_schema,
-    errors=errors,
-)
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        """Return options flow handler."""
+        return CMTEBOptionsFlow(config_entry)
+
+
+class CMTEBOptionsFlow(config_entries.OptionsFlow):
+    """Handle options flow for CMTEB Termoficare."""
+
+    def __init__(self, config_entry):
+        self.config_entry = config_entry
+
+    async def async_step_init(self, user_input=None):
+        """Manage the options."""
+        data_schema = vol.Schema({
+            vol.Optional(
+                "adresa",
+                default=self.config_entry.options.get(
+                    "adresa",
+                    self.config_entry.data.get("adresa", "")
+                )
+            ): cv.string,
+            vol.Optional(
+                "punct_termic",
+                default=self.config_entry.options.get(
+                    "punct_termic",
+                    self.config_entry.data.get("punct_termic", "")
+                )
+            ): cv.string,
+        })
+
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=data_schema,
+        )
