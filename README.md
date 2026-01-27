@@ -104,8 +104,8 @@ Fiecare adresa adaugata creeaza 3 senzori unici:
 ### 📱 Card:  Stare Detaliata 3 si cu Actualizare manuala
     Schimba culoare in functie de defectiune:
       - 🟢 VERDE + Text ALB = SISTEM FUNCȚIONAL
-      - 🟡 GALBEN + Text NEGRU = Deficienta Apa calda, Incalzire, Apa calda si Incalzire
-      - 🔴 ROȘU + Text NEGRU = Oprire Apa calda, Incalzire, Apa calda si Incalzire
+      - 🟡 GALBEN + Text NEGRU = Deficienta: Apa calda, Incalzire, Apa calda si Incalzire
+      - 🔴 ROȘU + Text NEGRU = Oprire: Apa calda, Incalzire, Apa calda si Incalzire
 
 ![Card Stare Detaliata 3](images/card3.png)
 
