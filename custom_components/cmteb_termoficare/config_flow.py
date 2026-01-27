@@ -17,13 +17,13 @@ class CMTEBConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         if user_input is not None:
-            # Validate the input
+            # Validări
             if not user_input.get("adresa"):
                 errors["base"] = "adresa_required"
             elif not user_input.get("punct_termic"):
                 errors["base"] = "punct_termic_required"
             else:
-                # Create unique ID based on adresa
+                # Crează unique_id
                 unique_id = f"cmteb_{user_input['adresa'].lower().replace(' ', '_')}"
                 await self.async_set_unique_id(unique_id)
                 self._abort_if_unique_id_configured()
@@ -33,7 +33,7 @@ class CMTEBConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     data=user_input,
                 )
 
-        # Define the form schema
+        # Schema formular
         data_schema = vol.Schema({
             vol.Required("adresa"): cv.string,
             vol.Required("punct_termic"): cv.string,
@@ -56,7 +56,6 @@ class CMTEBOptionsFlow(config_entries.OptionsFlow):
     """Handle options flow for CMTEB Termoficare."""
 
     def __init__(self, config_entry):
-        """Initialize options flow."""
         self.config_entry = config_entry
 
     async def async_step_init(self, user_input=None):
