@@ -2,7 +2,7 @@
   "config": {
     "error": {
       "adresa_required": "Adresa este obligatorie",
-      "punct_termic_required": "Introdu punctul termic"
+      "punct_termic_required": "Introdu punctul termic, pentru precizie"
     }
   }
 }
