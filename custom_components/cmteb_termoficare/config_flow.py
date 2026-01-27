@@ -24,9 +24,9 @@ class CMTEBConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             # Validări câmpuri
             if not user_input.get("adresa"):
-                errors["adresa"] = "adresa_required"
+                errors["adresa"] = "required"
             if not user_input.get("punct_termic"):
-                errors["punct_termic"] = "punct_termic_required"
+                errors["punct_termic"] = "required"
 
             if not errors:
                 # Creează unique_id pe baza adresei
