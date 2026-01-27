@@ -1,8 +1,19 @@
 {
-  "config": {
-    "error": {
-      "adresa_required": "Adresa este obligatorie",
-      "punct_termic_required": "Introdu punctul termic, pentru precizie"
+    "config": {
+        "step": {
+            "user": {
+                "data": {
+                    "adresa": "Adresă",
+                    "punct_termic": "Punct termic"
+                }
+            }
+        },
+        "error": {
+            "adresa_required": "Adresa este obligatorie",
+            "punct_termic_required": "Punctul termic este obligatoriu"
+        },
+        "abort": {
+            "already_configured": "Dispozitivul este deja configurat"
+        }
     }
-  }
 }
