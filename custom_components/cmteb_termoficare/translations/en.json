@@ -2,7 +2,8 @@
 {
   "config": {
     "error": {
-      "adresa_required": "Address is required"
+      "adresa_required": "Address is required to continue"
+
     }
   }
 }
