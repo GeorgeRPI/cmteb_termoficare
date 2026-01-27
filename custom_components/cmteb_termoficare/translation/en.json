@@ -1,7 +1,8 @@
 {
   "config": {
     "error": {
-      "adresa_required": "Please enter an address"
+      "adresa_required": "Please enter an address",
+      "punct_termic_required": "Please enter the heating point"
     }
   }
 }
