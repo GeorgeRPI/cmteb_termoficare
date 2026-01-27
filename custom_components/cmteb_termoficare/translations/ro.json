@@ -1,7 +1,8 @@
-{
     "config": {
         "step": {
             "user": {
+                "title": "Configurează CMTEB Termoficare",
+                "description": "Introdu informațiile sistemului de termoficare",
                 "data": {
                     "adresa": "Adresă",
                     "punct_termic": "Punct termic"
@@ -9,11 +10,6 @@
             }
         },
         "error": {
-            "adresa_required": "Adresa este obligatorie",
-            "punct_termic_required": "Punctul termic este obligatoriu"
-        },
-        "abort": {
-            "already_configured": "Dispozitivul este deja configurat"
+            "all_fields_required": "Toate câmpurile sunt obligatorii"
         }
     }
-}
