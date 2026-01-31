@@ -42,13 +42,13 @@ Integrarea recunoaște automat toate (aproape toate) variantele de scriere pentr
 <br>[![https://github.com/GeorgeRPI/cmteb_termoficare.git-Downloader](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=GeorgeRPI&repository=cmteb_termoficare&category=Integration)<br>  
 2. Click pe **Integrations**  
 3. Click pe butonul cu 3 puncte (⋮) din coltul dreapta sus  
-4. Selecteaza **Custom repositories**
-5. Adauga URL-ul: `https://github.com/GeorgeRPI/cmteb_termoficare`
-6. Selectează categoria **Integration**
-7. Click **Add**
-8. Cauta **"CMTEB Termoficare"** în lista de integrari noi
-9. Click **Download**
-10. **Reporneste Home Assistant**
+4. Selecteaza **Custom repositories**  
+5. Adauga URL-ul: `https://github.com/GeorgeRPI/cmteb_termoficare`  
+6. Selectează categoria **Integration**  
+7. Click **Add**  
+8. Cauta **"CMTEB Termoficare"** în lista de integrari noi  
+9. Click **Download**  
+10. **Reporneste Home Assistant**  
 
 ### Metoda 2: Instalare Manuala
 1. Descarca ultima versiune de pe [GitHub Releases](https://github.com/GeorgeRPI/cmteb_termoficare/releases)
