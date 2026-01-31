@@ -4,7 +4,9 @@
  - 🛣️ dupa strada si 🏭 punct termic<br>
  - ❌ Eroare daca nu se adauga adresa si punctul termic<br>
  ### 🔄 Actualizare manuala - buton in card<br>
+ 
  ### 📝 Card nou (in readme)<br>
+ 
  ### ☎️ Notificare Telegram (in readme)<br>
 
 ---
