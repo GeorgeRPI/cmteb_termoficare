@@ -38,7 +38,7 @@ Integrarea recunoaște automat toate (aproape toate) variantele de scriere pentr
 ## 📦 Instalare
 
 ### Metoda 1: Prin HACS (Recomandat)
-1. Deschide **HACS** în Home Assistant
+1. Deschide **HACS** în Home Assistant  
 <br>[![https://github.com/GeorgeRPI/cmteb_termoficare.git-Downloader](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=GeorgeRPI&repository=cmteb_termoficare&category=Integration)<br>  
 2. Click pe **Integrations**  
 3. Click pe butonul cu 3 puncte (⋮) din coltul dreapta sus  
