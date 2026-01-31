@@ -1,6 +1,17 @@
+ ## v.1.2.2 - **CMETB Termoficare** 🔥
+ 
+ ### ✅ Cautare mai precisa<br>
+ - 🛣️ dupa strada si 🏭 punct termic<br>
+ - ❌ Eroare daca nu se adauga adresa si punctul termic<br>
+ ### 🔄 Actualizare manuala - buton in card<br>
+ ### 📝 Card nou (in readme)<br>
+ ### ☎️ Notificare Telegram (in readme)<br>
+
+---
+
  ## v.1.2.1 - **CMETB Termoficare** 🔥
  
- ### **Cautare mai precisa**
+ ### ✅ **Cautare mai precisa**
  - 🛣️ dupa strada
  - 🏭 dupa punct termic
  - Strada si punctul termic sunt obligatorii pentru o precize buna (ex. pe pantelimon sunt vro 20 de puncte termice, daca nu se pune si punctul termic integrarea va afisa eronat datele).
