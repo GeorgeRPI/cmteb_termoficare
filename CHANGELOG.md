@@ -1,13 +1,13 @@
  ## v.1.2.2 - **CMETB Termoficare** 🔥
  
- ### ✅ Cautare mai precisa<br>
- - 🛣️ dupa strada si 🏭 punct termic<br>
- - ❌ Eroare daca nu se adauga adresa si punctul termic<br>
- ### 🔄 Actualizare manuala - buton in card<br>
+ ### ✅ Cautare mai precisa
+ - 🛣️ dupa strada si 🏭 punct termic
+ - ❌ Eroare daca nu se adauga adresa si punctul termic
+ ### 🔄 Actualizare manuala - buton in card
  
- ### 📝 Card nou (in readme)<br>
+ ### 📝 Card nou (in readme)
  
- ### ☎️ Notificare Telegram (in readme)<br>
+ ### ☎️ Notificare Telegram (in readme)
 
 ---
 
