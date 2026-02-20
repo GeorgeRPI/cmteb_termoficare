@@ -1,5 +1,15 @@
 ## v1.2.5 - **CMETB Termoficare** 🔥
 
+### 🔧 **Îmbunătățiri și corecții**
+
+- **Serviciu test_connection** – Înregistrat și funcțional (Developer Tools → Services → `cmteb_termoficare.test_connection`)
+- **Options flow** – Modificările din opțiuni (adresă, punct termic) sunt aplicate corect
+- **unique_id** – Include punctul termic → poți adăuga aceeași stradă cu puncte termice diferite
+- **Dependențe** – Adăugat `requests` în manifest
+- **Test conexiune** – Folosește HTTPS (nu HTTP)
+- **Cod** – Eliminat cod nefolosit, protecție pentru date lipsă
+- **README** – Condiții carduri corectate la `"Fără întreruperi"`
+
 
 ## v1.2.2 - **CMETB Termoficare** 🔥
 
