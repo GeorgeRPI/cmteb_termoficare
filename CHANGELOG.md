@@ -1,3 +1,6 @@
+## v1.2.5 - **CMETB Termoficare** 🔥
+
+
 ## v1.2.2 - **CMETB Termoficare** 🔥
 
 **✅ Cautare mai precisa**  
