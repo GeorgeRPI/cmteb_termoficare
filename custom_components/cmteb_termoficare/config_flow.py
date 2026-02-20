@@ -1,10 +1,21 @@
 """Config flow for CMTEB Termoficare."""
+import re
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 import homeassistant.helpers.config_validation as cv
 
 from .const import DOMAIN
+
+
+def _slug(text: str) -> str:
+    """Creează slug valid pentru unique_id."""
+    if not text:
+        return ""
+    s = text.lower().strip()
+    s = re.sub(r"[^\w\s]", "", s)
+    s = re.sub(r"\s+", "_", s).strip("_")
+    return s
 
 
 class CMTEBConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -14,7 +25,6 @@ class CMTEBConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(self, user_input=None):
         """Handle the initial step."""
-        # Schema cu Optional și default gol
         data_schema = vol.Schema({
             vol.Optional("adresa", default=""): cv.string,
             vol.Optional("punct_termic", default=""): cv.string,
@@ -23,15 +33,15 @@ class CMTEBConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         if user_input is not None:
-            # Validare manuală
             if not user_input.get("adresa"):
                 errors["adresa"] = "adresa_required"
             if not user_input.get("punct_termic"):
                 errors["punct_termic"] = "punct_termic_required"
 
             if not errors:
-                # Creează unique_id
-                unique_id = f"cmteb_{user_input['adresa'].lower().replace(' ', '_')}"
+                adresa_slug = _slug(user_input["adresa"]) or "adresa"
+                punct_slug = _slug(user_input.get("punct_termic", ""))
+                unique_id = f"cmteb_{adresa_slug}_{punct_slug}" if punct_slug else f"cmteb_{adresa_slug}"
                 await self.async_set_unique_id(unique_id)
                 self._abort_if_unique_id_configured()
 
