@@ -1,4 +1,4 @@
-## v1.2.5 - **CMETB Termoficare** 🔥
+## v1.2.3 - **CMETB Termoficare** 🔥
 
 ### 🔧 **Îmbunătățiri și corecții**
 
