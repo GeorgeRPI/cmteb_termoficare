@@ -584,7 +584,7 @@ cards:
     conditions:
       - condition: state
         entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
-        state_not: Făra Intreruperi
+        state_not: Fără întreruperi
     card:
       type: markdown
       content: >
@@ -615,7 +615,7 @@ cards:
     conditions:
       - condition: state
         entity: sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC
-        state: Fara intreruperi
+        state: Fără întreruperi
     card:
       type: markdown
       content: >
