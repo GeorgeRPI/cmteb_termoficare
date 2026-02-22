@@ -454,7 +454,7 @@ cards:
       # 🛣️ {{
       state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
       'Adresa') }}
-      ** 🔥 Punct Termic: ** {{
+       **🔥 Punct Termic:** {{
       state_attr('sensor.cmteb_agent_afectat_STRADA_PUNCT_TERMIC',
       'Punct_Termic') | default('General') }}
     card_mod:
