@@ -1,3 +1,17 @@
+## v1.5.8 - Stable - 2.06.2026 - **CMETB Termoficare**
+
+### Stable Release
+- Versiune stabilă de producție cu `requests`
+- Monitorizare avarii CMTEB București
+- Update automat la 30 minute
+- Parsing corect windows-1250 pentru diacritice românești
+- Senzor cu atribute: străzi afectate, tip lucrare, dată estimată
+- Config Flow pentru setup ușor
+- Compatibilitate Home Assistant ≥ 2023.8.0
+
+### Notă tehnică
+- Folosește `requests` (sync) – poate genera warning "blocking call" în log, inofensiv
+
 ## v1.2.3 - **CMETB Termoficare** 🔥
 
 ### 🔧 **Îmbunătățiri și corecții**
