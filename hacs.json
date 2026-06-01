@@ -1,8 +1,8 @@
 {
   "name": "CMTEB Termoficare",
-  "content": "integration",
-  "render_readme": true,
-  "domains": ["cmteb_termoficare"],
-  "iot_class": "cloud_polling",
-  "country": ["RO"]
+  "content_in_root": false,
+  "country": ["RO"],
+  "hacs": "1.6.0",
+  "homeassistant": "2023.8.0",
+  "render_readme": true
 }
