@@ -1,9 +1,20 @@
 {
-  "title": "CMTEB Termoficare",
   "config": {
+    "step": {
+      "user": {
+        "title": "Adaugă adresă CMTEB",
+        "data": {
+          "adresa": "Adresă",
+          "punct_termic": "Punct termic"
+        }
+      }
+    },
     "error": {
-      "adresa_required": "Te rugăm să introduci adresa",
-      "punct_termic_required": "Te rugăm să introduci punctul termic"
+      "cannot_connect": "Nu mă pot conecta la site-ul CMTEB",
+      "invalid_address": "Te rugăm să introduci adresa"
+    },
+    "abort": {
+      "already_configured": "Adresa este deja configurată"
     }
   }
 }
