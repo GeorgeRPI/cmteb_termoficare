@@ -1,9 +1,20 @@
 {
-  "title": "CMTEB Termoficare"
   "config": {
+    "step": {
+      "user": {
+        "title": "Add CMTEB address",
+        "data": {
+          "adresa": "Address",
+          "punct_termic": "Thermal point"
+        }
+      }
+    },
     "error": {
-      "adresa_required": "Please enter an address",
-      "punct_termic_required": "Please enter the heating point"
+      "cannot_connect": "Cannot connect to CMTEB website",
+      "invalid_address": "Please enter a valid address"
+    },
+    "abort": {
+      "already_configured": "Address already configured"
     }
   }
 }
