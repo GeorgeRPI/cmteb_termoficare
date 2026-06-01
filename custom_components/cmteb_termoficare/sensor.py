@@ -1,18 +1,18 @@
 """Sensor platform for CMTEB Termoficare."""
 import logging
-from datetime import timedelta
+from datetime import timedelta, datetime
 import re
-import time
 
-import requests
+import aiohttp
 from bs4 import BeautifulSoup
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .const import DOMAIN, URL_CMTEB
+from.const import DOMAIN, URL_CMTEB
 
 _LOGGER = logging.getLogger(__name__)
 SCAN_INTERVAL = timedelta(minutes=30)
@@ -28,7 +28,6 @@ ADRESA_VARIATIONS = {
     "intrare": ["intrare", "Intrare", "INTRARE"],
     "platforma": ["platforma", "Platforma", "PLATFORMA"],
 }
-
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -47,7 +46,6 @@ async def async_setup_entry(
         CmtebSensor(config_entry, "data_estimata_reparatie", "Dată Estimată Reparație", address_slug),
     ]
     async_add_entities(sensors, update_before_add=True)
-
 
 def _create_address_slug(address, punct_termic=""):
     """Creează un slug unic pentru adresă și punct termic."""
@@ -71,7 +69,6 @@ def _create_address_slug(address, punct_termic=""):
 
     return slug
 
-
 def _normalize_address(address: str) -> str:
     """Normalizează o adresă prin înlocuirea prescurtărilor."""
     if not address:
@@ -87,7 +84,6 @@ def _normalize_address(address: str) -> str:
                 break
 
     return normalized.strip()
-
 
 def _find_exact_match(user_address: str, user_punct_termic: str, site_location: str) -> bool:
     """Caută potrivire exactă între adresa+punct_termic și locația de pe site."""
@@ -131,7 +127,6 @@ def _find_exact_match(user_address: str, user_punct_termic: str, site_location: 
     _LOGGER.debug("Fără potrivire pentru '%s' + '%s' în '%s'", user_address, user_punct_termic, site_location)
     return False
 
-
 class CmtebSensor(SensorEntity):
     """Representation of a CMTEB Sensor."""
 
@@ -149,12 +144,10 @@ class CmtebSensor(SensorEntity):
 
     @property
     def name(self):
-        """Return the name of the sensor."""
         return f"cmteb_{self._type}_{self._address_slug}"
 
     @property
     def friendly_name(self):
-        """Return the friendly name of the sensor."""
         base_name = f"CMTEB {self._friendly_name}"
         if self._punct_termic:
             return f"{base_name} - {self._address} ({self._punct_termic})"
@@ -162,51 +155,46 @@ class CmtebSensor(SensorEntity):
 
     @property
     def state(self):
-        """Return the state of the sensor."""
         return self._state
 
     @property
     def available(self):
-        """Return if the sensor is available."""
         return self._available
 
     @property
     def extra_state_attributes(self):
-        """Return the state attributes."""
         return self._attrs
 
     @property
     def unique_id(self):
-        """Return a unique ID."""
         return f"{self._config_entry.entry_id}_{self._type}"
 
-    def _fetch_data(self):
-        """Fetch data from CMTEB website."""
+    async def _async_fetch_data(self):
+        """Fetch data from CMTEB website - ASYNC."""
         try:
             headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
                 "Accept-Language": "ro-RO,ro;q=0.9,en;q=0.8",
-                "Accept-Encoding": "gzip, deflate, br",
-                "Connection": "keep-alive",
             }
 
-            session = requests.Session()
-            session.headers.update(headers)
-            response = session.get(URL_CMTEB, timeout=30, allow_redirects=True)
+            session = async_get_clientsession(self.hass)
+            async with session.get(URL_CMTEB, headers=headers, timeout=aiohttp.ClientTimeout(total=30)) as response:
 
-            if response.status_code != 200:
-                self._state = f"Eroare HTTP {response.status_code}"
-                self._available = False
-                self._attrs = {
-                    "Eroare": f"Cod HTTP: {response.status_code}",
-                    "Adresa": self._address,
-                    "Punct_Termic": self._punct_termic,
-                    "Ultima_Încercare": time.strftime("%Y-%m-%d %H:%M:%S"),
-                }
-                return False
+                if response.status!= 200:
+                    self._state = f"Eroare HTTP {response.status}"
+                    self._available = False
+                    self._attrs = {
+                        "Eroare": f"Cod HTTP: {response.status}",
+                        "Adresa": self._address,
+                        "Punct_Termic": self._punct_termic,
+                        "Ultima_Încercare": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    }
+                    return False
 
-            soup = BeautifulSoup(response.content, "html.parser")
+                html = await response.text()
+
+            soup = BeautifulSoup(html, "html.parser")
             tables = soup.find_all("table")
 
             if not tables:
@@ -216,7 +204,7 @@ class CmtebSensor(SensorEntity):
                     "Adresa": self._address,
                     "Punct_Termic": self._punct_termic,
                     "Status": "Nu s-au găsit tabele pe pagină",
-                    "Ultima_Actualizare": time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "Ultima_Actualizare": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 }
                 return True
 
@@ -247,7 +235,7 @@ class CmtebSensor(SensorEntity):
                                 "Adresa": self._address,
                                 "Punct_Termic": self._punct_termic,
                                 "Locatie_Gasita": location_text,
-                                "Ultima_Actualizare": time.strftime("%Y-%m-%d %H:%M:%S"),
+                                "Ultima_Actualizare": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                                 "Metoda_Potrivire": "precisa_adresa_punct",
                             }
                             self._available = True
@@ -264,7 +252,7 @@ class CmtebSensor(SensorEntity):
                 self._attrs = {
                     "Adresa": self._address,
                     "Punct_Termic": self._punct_termic,
-                    "Ultima_Actualizare": time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "Ultima_Actualizare": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     "Status": "Nu s-au găsit întreruperi pentru această combinație adresă+punct termic",
                 }
                 _LOGGER.info("Fără întreruperi pentru: '%s' + '%s'", self._address, self._punct_termic)
@@ -279,10 +267,10 @@ class CmtebSensor(SensorEntity):
                 "Eroare": str(e),
                 "Adresa": self._address,
                 "Punct_Termic": self._punct_termic,
-                "Ultima_Încercare": time.strftime("%Y-%m-%d %H:%M:%S"),
+                "Ultima_Încercare": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             }
             return False
 
     async def async_update(self):
         """Update the sensor."""
-        await self.hass.async_add_executor_job(self._fetch_data)
+        await self._async_fetch_data()
